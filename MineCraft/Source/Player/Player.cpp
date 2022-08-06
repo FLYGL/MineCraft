@@ -40,6 +40,15 @@ void Player::keyboardInput()
 		change.x = glm::sin(glm::radians(rotation.y+90)) * speed;
 		change.z = glm::cos(glm::radians(rotation.y+90)) * speed;
 	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	{
+		change.y += speed;
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+	{
+		change.y -= speed;
+	}
+
 	m_velocity += change;
 }
 void Player::mouseInput(const sf::RenderWindow& window)
