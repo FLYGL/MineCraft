@@ -6,6 +6,7 @@
 #include "Renderer/RenderMaster.h"
 
 #include "Context.h"
+#include "Camera.h"
 
 class Application
 {
@@ -24,6 +25,10 @@ public:
 	}
 
 	void popState();
+
+	Camera& getCamera() { return m_camera; }
+
+	const sf::RenderWindow& getWindow() const { return m_context.window; }
 private:
 	void handleEvents();
 
@@ -31,6 +36,7 @@ private:
 
 	Context m_context;
 	RenderMaster m_masterRenderer;
+	Camera m_camera;
 
 	bool m_isPopState = false;
 };

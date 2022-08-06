@@ -4,12 +4,22 @@
 Camera::Camera()
 {
 	m_projectionMatrix = makeProjectionMatrix(90);
+
+	position = { 1,1,3.5 };
 }
 
 void Camera::update()
 {
+
+	position = m_pEntity->position;
+	rotation = m_pEntity->rotation;
 	m_viewMatrix = makeViewMatrix(*this);
 	m_projViewMatrix = m_projectionMatrix * m_viewMatrix;
+}
+
+void Camera::hookEntity(const Entity& entity)
+{
+	m_pEntity = &entity;
 }
 
 const glm::mat4& Camera::getViewMatrix() const noexcept
@@ -25,15 +35,4 @@ const glm::mat4& Camera::getProjMatrix() const noexcept
 const glm::mat4& Camera::getProjectionViewMatrix() const noexcept
 {
 	return m_projViewMatrix;
-}
-
-const glm::vec3& Camera::getPosition() const noexcept
-{
-	return m_worldPosition;
-}
-
-//KeyPoint :  这里的旋转是指什么样的旋转
-const glm::vec3& Camera::getRotation() const noexcept
-{
-	return m_rotation;
 }

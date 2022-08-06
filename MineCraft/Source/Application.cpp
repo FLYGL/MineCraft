@@ -14,10 +14,12 @@ void Application::runLoop()
 		auto deltaTime = dtTimer.restart();
 		auto& state = *m_states.back();
 
+		m_camera.update();
+
 		state.handleInput();
 		state.update(deltaTime.asSeconds());
 		state.render(m_masterRenderer);
-		//m_masterRenderer.finishRender(m_context.window);
+		m_masterRenderer.finishRender(m_context.window,m_camera);
 
 		handleEvents();
 		if (m_isPopState)

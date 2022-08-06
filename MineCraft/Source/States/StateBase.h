@@ -18,6 +18,6 @@ public:
 
 	virtual void render(RenderMaster& renderer) = 0;
 
-private:
+protected:
 	Application* m_pApplication;
 };

@@ -1,6 +1,7 @@
 #include "QuadRenderer.h"
 #include <iostream>
 #include "../Camera.h"
+#include "../Maths/Matrix.h"
 
 QuadRenderer::QuadRenderer()
 {
@@ -38,7 +39,7 @@ void QuadRenderer::renderQuads(const Camera& camera)
 
 	m_shader.loadProjectionViewMatrix(camera.getProjectionViewMatrix());
 	for (auto& quad : m_quads) {
-		//TODO
+		m_shader.loadModelMatrix(makeModelMatrix({ quad, { 0,0,0 } }));
 		glDrawElements(GL_TRIANGLES, m_quadModel.getIndicesCount(), GL_UNSIGNED_INT, nullptr);
 	}
 	
