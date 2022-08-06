@@ -5,8 +5,8 @@
 class BasicShader : public Shader
 {
 public:
-	BasicShader(const std::string& vertexFile = "BasicVertex",
-		const std::string& fragmentFile = "BasicFragment");
+	BasicShader(const std::string& vertexFile = "Shaders/BasicVertex.glsl",
+		const std::string& fragmentFile = "Shaders/BasicFragment.glsl");
 	void loadProjectionViewMatrix(const glm::mat4& pMatrix);
 private:
 	virtual void getUniforms() override;

@@ -18,7 +18,7 @@ void StatePlaying::handleInput()
 }
 
 void StatePlaying::update(float deltaTime)
-{
+                                                                                                                                                                              {
 
 }
 
