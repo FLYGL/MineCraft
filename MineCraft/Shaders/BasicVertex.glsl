@@ -11,6 +11,5 @@ uniform mat4 modelMatrix;
 void main()
 {
     gl_Position = projViewMatrix * modelMatrix * vec4(inVertexPosition, 1.0);
-    //gl_Position = modelMatrix * vec4(inVertexPosition, 1.0);
     passTextureCoord = inTextureCoord;
 }
