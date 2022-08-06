@@ -1,11 +1,24 @@
 #include "BasicTexture.h"
 
-#include <SFML/Graphics.hpp>
 
 BasicTexture::BasicTexture(const std::string& file)
 {
 	loadFromFile(file);
 }
+
+void BasicTexture::loadFromImage(const sf::Image& i)
+{
+	glGenTextures(1, &m_id);
+	glBindTexture(GL_TEXTURE_2D, m_id);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, i.getSize().x, i.getSize().y,
+		0, GL_RGBA, GL_UNSIGNED_BYTE, i.getPixelsPtr());
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
 // Key Point : SFML image 使用
 void BasicTexture::loadFromFile(const std::string& file)
 {
@@ -14,18 +27,7 @@ void BasicTexture::loadFromFile(const std::string& file)
 	{
 		//TODO
 	}
-	glGenTextures(1, &m_id);
-	glBindTexture(GL_TEXTURE_2D, m_id);
-	//TODO ： 复习参数含义
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, i.getSize().x, i.getSize().y, 0,
-		GL_RGBA, GL_UNSIGNED_BYTE, i.getPixelsPtr());
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	// TODO ： 复习对应哪个是 texture放大，哪个是texture缩小
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
+	loadFromImage(i);
 }
 
 BasicTexture::~BasicTexture()
