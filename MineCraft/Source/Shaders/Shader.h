@@ -3,8 +3,8 @@
 #include<string>
 #include<GL/glew.h>
 
+#include "../GL/GLFunctions.h"
 #include "../Maths/glm.h"
-
 #include "../Util/NonCopyable.h"
 
 class Shader :NonCopyable

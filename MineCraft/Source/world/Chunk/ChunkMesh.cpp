@@ -1,11 +1,9 @@
 #include "ChunkMesh.h"
 #include "../WorldConstants.h"
-#include <iostream>
 ChunkMesh::ChunkMesh()
 {
 
 }
-//TODO : 需要调试看一下数据 ： chunkPosition 块坐标， blockPosition 在块内 面的坐标
 void ChunkMesh::addFace(const std::vector<GLfloat>& blockFace,
 	const std::vector<GLfloat>& textureCoords,
 	const sf::Vector3i& chunkPosition,
@@ -38,12 +36,6 @@ void ChunkMesh::addFace(const std::vector<GLfloat>& blockFace,
 
 void ChunkMesh::bufferMesh()
 {
-
-	std::cout << "Buffered"
-		<< "\nVertex:   " << m_mesh.vertexPositions.size()
-		<< "\nTextures: " << m_mesh.textureCoords.size()
-		<< "\nIndices:  " << m_mesh.indices.size() << "\n";
-
 	m_model.addData(m_mesh);
 	m_mesh.vertexPositions.clear();
 	m_mesh.textureCoords.clear();

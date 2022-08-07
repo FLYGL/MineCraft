@@ -9,6 +9,10 @@ public:
 	Model() = default;
 	Model(const Mesh& mesh);
 	~Model();
+
+	Model(Model&& other);
+	Model& operator=(Model&& other);
+
 	void addData(const Mesh& mesh);
 	void deleteData();
 	void addVBO(int dimensions, const std::vector<GLfloat>& data);

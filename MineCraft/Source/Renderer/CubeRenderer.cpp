@@ -2,7 +2,6 @@
 
 #include "../Camera.h"
 #include "../Maths/Matrix.h"
-#include <iostream>
 
 CubeRenderer::CubeRenderer():m_atlasTest("DefaultPack")
 {
@@ -88,7 +87,6 @@ void CubeRenderer::add(const glm::vec3& position)
 
 void CubeRenderer::render(const Camera& camera)
 {
-	//glEnable(GL_CULL_FACE);
 
 	m_shader.useProgram();
 	m_cubeModel.bindVAO();
@@ -99,7 +97,7 @@ void CubeRenderer::render(const Camera& camera)
 	for (auto& cube : m_cubes)
 	{
 		m_shader.loadModelMatrix(makeModelMatrix({ cube,{0,0,0} }));
-		glDrawElements(GL_TRIANGLES, m_cubeModel.getIndicesCount(), GL_UNSIGNED_INT, nullptr);
+		GL::drawElements(m_cubeModel.getIndicesCount());
 	}
 
 	m_cubes.clear();

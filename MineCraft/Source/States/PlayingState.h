@@ -2,7 +2,9 @@
 
 #include "StateBase.h"
 #include "../Player/Player.h"
-#include "../world/Chunk/ChunkSection.h"
+#include "../world/Chunk/Chunk.h"
+#include "../world/World.h"
+
 class StatePlaying : public StateBase
 {
 public:
@@ -13,5 +15,5 @@ public:
 	void render(RenderMaster& render)override;
 private:
 	Player m_player;
-	ChunkSection m_chunkTest;
+	World m_world;
 };

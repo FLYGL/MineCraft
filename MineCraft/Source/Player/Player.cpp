@@ -14,12 +14,16 @@ void Player::handleInput(const sf::RenderWindow& window)
 void Player::update(float dt)
 {
 	position += m_velocity * dt;
-	m_velocity *= 0.5;
+	m_velocity *= 0.95;
 }
 void Player::keyboardInput()
 {
 	glm::vec3 change(0.f);
 	float speed = 0.5;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+	{
+		speed = speed * 3;
+	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
 		change.x = glm::sin(glm::radians(rotation.y+180)) * speed;

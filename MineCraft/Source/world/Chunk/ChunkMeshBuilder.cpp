@@ -106,19 +106,12 @@ void ChunkMeshBuilder::buildMesh(ChunkMesh& mesh)
                 auto& data = *m_pBlockData;
                 directions.update(x, y, z);
 
-                tryAddFaceToMesh(bottomFace, data.texBottomCoord, position, directions.down);
-                tryAddFaceToMesh(topFace, data.texTopCoord, position, directions.up);
-                tryAddFaceToMesh(leftFace, data.texSideCoord, position, directions.left);
-                tryAddFaceToMesh(rightFace, data.texSideCoord, position, directions.right);
-                tryAddFaceToMesh(frontFace, data.texSideCoord, position, directions.front);
                 tryAddFaceToMesh(backFace, data.texSideCoord, position, directions.back);
-
-                //tryAddFaceToMesh(backFace, data.texSideCoord, position, directions.back);
-                //tryAddFaceToMesh(frontFace, data.texSideCoord, position, directions.front);
-                //tryAddFaceToMesh(rightFace, data.texSideCoord, position, directions.right);
-                //tryAddFaceToMesh(leftFace, data.texSideCoord, position, directions.left);
-                //tryAddFaceToMesh(topFace, data.texTopCoord, position, directions.up);
-                //tryAddFaceToMesh(bottomFace, data.texBottomCoord, position, directions.down);
+                tryAddFaceToMesh(frontFace, data.texSideCoord, position, directions.front);
+                tryAddFaceToMesh(rightFace, data.texSideCoord, position, directions.right);
+                tryAddFaceToMesh(leftFace, data.texSideCoord, position, directions.left);
+                tryAddFaceToMesh(topFace, data.texTopCoord, position, directions.up);
+                tryAddFaceToMesh(bottomFace, data.texBottomCoord, position, directions.down);
             }
     std::cout << "End mesh build, faces: " << faces << " Time: " << c.getElapsedTime().asMilliseconds() << "ms\n";
 }
