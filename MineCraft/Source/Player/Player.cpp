@@ -1,7 +1,7 @@
 #include "Player.h"
 Player::Player()
 {
-	position = { 0,0,3 };
+	position = { -5,5,5 };
 	m_velocity = { 0,0,0 };
 	rotation = { 0,0,0 };
 }

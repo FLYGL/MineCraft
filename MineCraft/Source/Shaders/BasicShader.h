@@ -9,8 +9,9 @@ public:
 		const std::string& fragmentFile = "Shaders/BasicFragment.glsl");
 	void loadProjectionViewMatrix(const glm::mat4& pMatrix);
 	void loadModelMatrix(const glm::mat4& matrix);
-private:
+protected:
 	virtual void getUniforms() override;
+private:
 	GLuint m_locationProjectionViewMatrix;
 	GLuint m_locationModelMatrix;
 };
