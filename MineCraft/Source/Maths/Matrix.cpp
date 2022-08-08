@@ -17,18 +17,17 @@ glm::mat4 makeModelMatrix(const Entity& entity)
 
 
 
-//KeyPoint : Camera Space Transform
-// 修改为 球面坐标
+
 glm::mat4 makeViewMatrix(const Camera& camera)
 {
 	glm::mat4 tMatrix(1.0f);
 	tMatrix = glm::translate(tMatrix, -camera.position);
 	glm::mat4 rYMatrix(1.f);
-	rYMatrix = glm::rotate(rYMatrix, glm::radians(-camera.rotation.y), { 0,1,0 });
+	rYMatrix = glm::rotate(rYMatrix, glm::radians(camera.rotation.y), { 0,1,0 });
 	glm::mat4 rXmatrix(1.f);
 	glm::vec3 axis =glm::vec3(rYMatrix* glm::vec4(1,0,0,0));
-	rXmatrix = glm::rotate(rXmatrix, glm::radians(-camera.rotation.x), {1,0,0});
-	return rXmatrix*rYMatrix *tMatrix;
+	rXmatrix = glm::rotate(rXmatrix, glm::radians(camera.rotation.x), axis);
+	return glm::transpose(rYMatrix)* glm::transpose(rXmatrix) * tMatrix;
 }
 
 glm::mat4 makeProjectionMatrix(float fov)
