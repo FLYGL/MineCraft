@@ -15,7 +15,7 @@ void StatePlaying::handleEvent(sf::Event e)
 
 void StatePlaying::handleInput()
 {
-	m_player.handleInput(m_pApplication->getWindow());
+	m_player.handleInput(m_pApplication->getWindow(), m_world);
 }
 
 void StatePlaying::update(float deltaTime)

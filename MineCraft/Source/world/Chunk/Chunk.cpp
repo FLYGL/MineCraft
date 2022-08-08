@@ -9,6 +9,24 @@ Chunk::Chunk(World& world,const sf::Vector2i& location): m_location(location), m
 	{
 		m_chunks.emplace_back(sf::Vector3i(location.x, y, location.y), world);
 	}
+
+	int h = m_chunks.size() * CHUNK_SIZE - 1;
+	for( int y = 0 ; y < m_chunks.size()*CHUNK_SIZE;y++)
+		for(int x = 0; x< CHUNK_SIZE; x++)
+			for (int z = 0; z < CHUNK_SIZE; z++)
+			{
+				if (y == h)
+				{
+					setBlock(x, y, z, BlockId::Grass);
+				}
+				else if (y > h - 3)
+				{
+					setBlock(x, y, z, BlockId::Dirt);
+				}
+				else {
+					setBlock(x, y, z, BlockId::Stone);
+				}
+			}
 }
 void Chunk::makeAllMeshtemp()
 {
@@ -19,13 +37,14 @@ void Chunk::makeAllMeshtemp()
 		chunk.m_mesh.bufferMesh();
 	}
 }
-
 void Chunk::setBlock(int x, int y, int z, ChunkBlock block)
 {
 	if (outOfBound(x, y, z))
 	{
 		return;
 	}
+	int bY = y % CHUNK_SIZE;
+	m_chunks.at(y / CHUNK_SIZE).setBlock(x, bY, z,block);
 }
 
 ChunkBlock Chunk::getBlock(int x, int y, int z) const

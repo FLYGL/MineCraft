@@ -1,14 +1,17 @@
 #include "Player.h"
+#include "../Maths/Ray.h"
+#include "../world/Block/BlockId.h"
 Player::Player()
 {
 	position = { -5,5,5 };
 	m_velocity = { 0,0,0 };
 	rotation = { 0,0,0 };
 }
-void Player::handleInput(const sf::RenderWindow& window)
+void Player::handleInput(const sf::RenderWindow& window, World& world)
 {
 	keyboardInput();
 	mouseInput(window);
+	mouseClick(world);
 }
 
 void Player::update(float dt)
@@ -75,4 +78,27 @@ void Player::mouseInput(const sf::RenderWindow& window)
 	sf::Mouse::setPosition({ cx,cy }, window);
 
 	lastMousePosition = sf::Mouse::getPosition();
+}
+
+void Player::mouseClick(World& world)
+{
+	static sf::Clock timer;
+
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)&& timer.getElapsedTime().asSeconds() > 0.2)
+	{
+		for (Ray ray(position, rotation); ray.getLength() < 6; ray.step(0.1))
+		{
+			int x = ray.getEnd().x;
+			int y = ray.getEnd().y;
+			int z = ray.getEnd().z;
+
+			auto block = world.getBlock(x, y, z);
+			if (block != BlockId::Air)
+			{
+				timer.restart();
+				world.editBlock(x, y, z, BlockId::Air);
+				break;
+			}
+		}
+	}
 }

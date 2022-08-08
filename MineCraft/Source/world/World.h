@@ -13,6 +13,7 @@ public:
 	ChunkBlock getBlock(int x, int y, int z) const override;
 	void setBlock(int x, int y, int z, ChunkBlock block) override;
 	void renderWorld(RenderMaster& master);
+	void editBlock(int x, int y, int z, ChunkBlock block);
 private:
 	std::vector<Chunk> m_chunks;
 };

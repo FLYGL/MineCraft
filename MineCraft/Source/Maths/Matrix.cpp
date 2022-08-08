@@ -18,24 +18,17 @@ glm::mat4 makeModelMatrix(const Entity& entity)
 
 
 //KeyPoint : Camera Space Transform
+// 修改为 球面坐标
 glm::mat4 makeViewMatrix(const Camera& camera)
 {
-	glm::mat4 matrix(1.0f);
-	//glm::mat4 translateMat(1.f);
-	//translateMat[3] = glm::vec4(-camera.position, 1.f);
-	//glm::vec3 tmpR = -glm::radians(camera.rotation);
-	//glm::mat4 rotateX(1.f);
-	//rotateX[1] = glm::vec4(0, glm::cos(tmpR.x), glm::sin(tmpR.x), 0);
-	//rotateX[2] = glm::vec4(0, -glm::sin(tmpR.x), glm::cos(tmpR.x), 0);
-	//glm::mat4 rotateY(1.f);
-	//rotateY[0] = glm::vec4(glm::cos(tmpR.y), 0, -glm::sin(tmpR.y), 0);
-	//rotateY[2] = glm::vec4(glm::sin(tmpR.y),  0, glm::cos(tmpR.y), 0);
-	//matrix = rotateX * rotateY * translateMat;
-	matrix = glm::rotate(matrix, glm::radians(-camera.rotation.x), { 1,0,0 });
-	matrix = glm::rotate(matrix, glm::radians(-camera.rotation.y), { 0,1,0 });
-	matrix = glm::translate(matrix, -camera.position);
-
-	return matrix;
+	glm::mat4 tMatrix(1.0f);
+	tMatrix = glm::translate(tMatrix, -camera.position);
+	glm::mat4 rYMatrix(1.f);
+	rYMatrix = glm::rotate(rYMatrix, glm::radians(-camera.rotation.y), { 0,1,0 });
+	glm::mat4 rXmatrix(1.f);
+	glm::vec3 axis =glm::vec3(rYMatrix* glm::vec4(1,0,0,0));
+	rXmatrix = glm::rotate(rXmatrix, glm::radians(-camera.rotation.x), {1,0,0});
+	return rXmatrix*rYMatrix *tMatrix;
 }
 
 glm::mat4 makeProjectionMatrix(float fov)
