@@ -1,6 +1,47 @@
 #include "Player.h"
 #include "../Maths/Ray.h"
 #include "../world/Block/BlockId.h"
+#include <iostream>
+namespace
+{
+	glm::vec3 GetNewBlockPosition(const glm::vec3& blockPosition,glm::vec3 playerPosition)
+	{
+		//变化坐标系
+		playerPosition -= blockPosition+glm::vec3(-0.5f,0.5f,0.5f);
+		glm::vec3 absPositon = glm::abs(playerPosition);
+		// 在 x方向
+		if (absPositon.x > absPositon.y && absPositon.x > absPositon.z)
+		{
+			if (playerPosition.x > 0) {
+				return blockPosition + glm::vec3(1,0,0);
+			}
+			else {
+				return blockPosition + glm::vec3(-1, 0, 0);
+			}
+		}
+		// 在 z 方向
+		if (absPositon.z > absPositon.y && absPositon.z > absPositon.x)
+		{
+			if (playerPosition.z > 0) {
+				return blockPosition + glm::vec3(0, 0, 1);
+			}
+			else {
+				return blockPosition + glm::vec3(0, 0, -1);
+			}
+		}
+		//在y方向
+		if (absPositon.y > absPositon.x && absPositon.y > absPositon.z)
+		{
+			if (playerPosition.y > 0) {
+				return blockPosition + glm::vec3(0, 1, 0);
+			}
+			else {
+				return blockPosition + glm::vec3(0, -1, 0);
+			}
+		}
+		return blockPosition;
+	}
+}
 Player::Player()
 {
 	position = { -5,5,5 };
@@ -83,22 +124,46 @@ void Player::mouseInput(const sf::RenderWindow& window)
 void Player::mouseClick(World& world)
 {
 	static sf::Clock timer;
-
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)&& timer.getElapsedTime().asSeconds() > 0.2)
+	if (timer.getElapsedTime().asSeconds() > 0.2)
 	{
-		for (Ray ray(position, rotation); ray.getLength() < 6; ray.step(0.1))
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
-			int x = ray.getEnd().x;
-			int y = ray.getEnd().y;
-			int z = ray.getEnd().z;
-
-			auto block = world.getBlock(x, y, z);
-			if (block != BlockId::Air)
+			for (Ray ray(position, rotation); ray.getLength() < 6; ray.step(0.1))
 			{
-				timer.restart();
-				world.editBlock(x, y, z, BlockId::Air);
-				break;
+				int x = ray.getEnd().x;
+				int y = ray.getEnd().y;
+				int z = ray.getEnd().z;
+
+				auto block = world.getBlock(x, y, z);
+				if (block != BlockId::Air)
+				{
+					timer.restart();
+					world.editBlock(x, y, z, BlockId::Air);
+					break;
+				}
+			}
+		}
+		else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+		{
+			for (Ray ray(position, rotation); ray.getLength() < 6; ray.step(0.1))
+			{
+				int x = ray.getEnd().x;
+				int y = ray.getEnd().y;
+				int z = ray.getEnd().z;
+
+				auto block = world.getBlock(x, y, z);
+				if (block != BlockId::Air)
+				{
+					timer.restart();
+					glm::vec3 newBlockPosition = GetNewBlockPosition({ x,y,z }, position);
+					//if (newBlockPosition != glm::vec3(x, y, z))
+					//{
+					//}
+					world.AddBlock(newBlockPosition.x, newBlockPosition.y, newBlockPosition.z, BlockId::Grass);
+					break;
+				}
 			}
 		}
 	}
 }
+

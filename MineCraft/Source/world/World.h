@@ -14,6 +14,8 @@ public:
 	void setBlock(int x, int y, int z, ChunkBlock block) override;
 	void renderWorld(RenderMaster& master);
 	void editBlock(int x, int y, int z, ChunkBlock block);
+	void AddBlock(int x, int y, int z, ChunkBlock block);
 private:
 	std::vector<Chunk> m_chunks;
+	std::vector<Chunk*> m_changedChunks;
 };

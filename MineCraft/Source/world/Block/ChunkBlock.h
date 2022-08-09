@@ -13,7 +13,10 @@ struct ChunkBlock
 
 	const BlockData& getData() const;
 	const BlockType& getType() const;
-
+	const BlockId& getBlockId() const
+	{
+		return static_cast<BlockId>(id);
+	}
 	bool operator == (const ChunkBlock& other)
 	{
 		return id == other.id;
