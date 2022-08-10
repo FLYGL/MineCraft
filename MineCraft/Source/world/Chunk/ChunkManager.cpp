@@ -18,9 +18,12 @@ Chunk* ChunkManager::getChunk(int x, int z)
 		VectorXZ key{ x,z };
 		res = &m_chunks.at({ x,z });
 	}
+	else
+	{
+		res = newChunk(x, z);
+	}
 	return res;
 }
-
 Chunk* ChunkManager::newChunk(int x, int z)
 {
 	Chunk* res = nullptr;
@@ -30,6 +33,7 @@ Chunk* ChunkManager::newChunk(int x, int z)
 		Chunk chunk{ *m_world,{x,z} };
 		m_chunks.emplace(key, std::move(chunk));
 		res = &m_chunks.at(key);
+		res->load();
 	}
 	return res;
 }
@@ -39,8 +43,7 @@ bool ChunkManager::makeMesh(int x, int z)
 	Chunk* pChunk = getChunk(x, z);
 	if (pChunk)
 	{
-		pChunk->makeMesh();
-		return true;
+		return pChunk->makeMesh();
 	}
 	return false;
 }

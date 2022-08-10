@@ -16,7 +16,6 @@ public:
 	ChunkBlock getBlock(int x, int y, int z) const override;
 	const sf::Vector3i getLocation() const noexcept;
 	bool hashMesh() const noexcept;
-	void meshed();
 	void makeMesh();
 	const ChunkMesh& getMesh() const;
 private:

@@ -22,12 +22,9 @@ bool ChunkSection::setBlock(int x, int y, int z, ChunkBlock block)
 
 void ChunkSection::makeMesh()
 {
-	if (!hashMesh())
-	{
-		ChunkMeshBuilder(*this, m_mesh).buildMesh();
-		m_mesh.bufferMesh();
-		m_hasMesh = true;
-	}
+	ChunkMeshBuilder(*this, m_mesh).buildMesh();
+	m_mesh.bufferMesh();
+	m_hasMesh = true;
 }
 
 ChunkBlock ChunkSection::getBlock(int x, int y, int z)const
@@ -67,10 +64,7 @@ bool ChunkSection::hashMesh() const noexcept
 {
 	return m_hasMesh;
 }
-void ChunkSection::meshed()
-{
-	m_hasMesh = true;
-}
+
 const ChunkMesh& ChunkSection::getMesh() const 
 {
 	return m_mesh;

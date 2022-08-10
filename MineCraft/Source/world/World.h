@@ -6,13 +6,14 @@
 #include "Chunk/ChunkManager.h"
 
 class RenderMaster;
-
+class Camera;
 class World
 {
 public:
 	World();
 	ChunkBlock getBlock(int x, int y, int z) ;
 	bool setBlock(int x, int y, int z, ChunkBlock block);
+	void update(const Camera& camera);
 	void renderWorld(RenderMaster& master);
 private:
 	ChunkManager m_chunkManager;

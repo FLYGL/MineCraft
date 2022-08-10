@@ -6,11 +6,16 @@ Chunk::Chunk(World& world,const sf::Vector2i& location): m_location(location), m
 }
 bool Chunk::makeMesh()
 {
+	bool res = false;
 	for (auto& chunk : m_chunks)
 	{
-		chunk.makeMesh();
+		if (!chunk.hashMesh())
+		{
+			chunk.makeMesh();
+			res = true;
+		}
 	}
-	return true;
+	return res;
 }
 bool Chunk::setBlock(int x, int y, int z, ChunkBlock block)
 {

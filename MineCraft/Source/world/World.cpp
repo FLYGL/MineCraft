@@ -4,7 +4,7 @@
 
 namespace
 {
-	constexpr int temp_worldSize = 8;
+	constexpr int temp_worldSize = 32;
 	VectorXZ getBlockXZ(int x, int z)
 	{
 		return {
@@ -32,20 +32,7 @@ namespace
 
 World::World():m_chunkManager(*this)
 {
-	for (int x = 0; x < temp_worldSize; x++)
-	{
-		for (int z = 0; z < temp_worldSize; z++)
-		{
-			m_chunkManager.newChunk(x, z)->load();
-		}
-	}
-	for (int x = 0; x < temp_worldSize; x++)
-	{
-		for (int z = 0; z < temp_worldSize; z++)
-		{
-			m_chunkManager.makeMesh(x, z);
-		}
-	}
+	
 }
 
 bool World::setBlock(int x, int y, int z, ChunkBlock block)
@@ -75,6 +62,18 @@ ChunkBlock World::getBlock(int x, int y, int z)
 	}
 	return m_chunkManager.getChunk(cp.x,cp.z)->getBlock(bp.x, y, bp.z);
 }
+
+void World::update(const Camera& camera)
+{
+	for (int x = 0; x < temp_worldSize; x++)
+	{
+		for (int z = 0; z < temp_worldSize; z++)
+		{
+			if (m_chunkManager.makeMesh(x, z)) return;
+		}
+	}
+}
+
 void World::renderWorld(RenderMaster& renderer)
 {
 	for (auto& location : m_rebuildChunks)
