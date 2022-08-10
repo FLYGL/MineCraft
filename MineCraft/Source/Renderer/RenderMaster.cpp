@@ -28,5 +28,6 @@ void RenderMaster::finishRender(sf::RenderWindow& window, const Camera& camera)
 	m_quadRenderer.render(camera);
 	m_cubeRenderer.render(camera);
 	m_chunkRenderer.render(camera);
+	m_skyboxRenderer.render(camera);
 	window.display();
 }

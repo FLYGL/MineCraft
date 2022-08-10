@@ -40,11 +40,9 @@ void ChunkMesh::bufferMesh()
 	m_mesh.vertexPositions.clear();
 	m_mesh.textureCoords.clear();
 	m_mesh.indices.clear();
-
 	m_mesh.vertexPositions.shrink_to_fit();
 	m_mesh.textureCoords.shrink_to_fit();
 	m_mesh.indices.shrink_to_fit();
-
 	m_indexIndex = 0;
 }
 

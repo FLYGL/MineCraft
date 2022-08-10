@@ -1,22 +1,33 @@
 #include "ChunkSection.h"
 #include "../Block/BlockId.h"
 #include "../World.h"
+#include "ChunkMeshBuilder.h"
 
 ChunkSection::ChunkSection(const sf::Vector3i& position, World& world):m_location(position),
 	m_pWorld(&world)
 { 
-	static_assert(sizeof(m_blocks) == CHUNK_VOLUME, "Size too big, yo");
 }
 
-void ChunkSection::setBlock(int x, int y, int z, ChunkBlock block)
+bool ChunkSection::setBlock(int x, int y, int z, ChunkBlock block)
 {
 	if (outOfBounds(x) || outOfBounds(y) || outOfBounds(z))
 	{
 		auto location = toWorldPosition(x, y, z);
-		m_pWorld->setBlock(location.x, location.y, location.z, block);
-		return;
+		return m_pWorld->setBlock(location.x, location.y, location.z, block);
 	}
+	m_hasMesh = false;
 	m_blocks[getIndex(x, y, z)] = block;
+	return true;
+}
+
+void ChunkSection::makeMesh()
+{
+	if (!hashMesh())
+	{
+		ChunkMeshBuilder(*this, m_mesh).buildMesh();
+		m_mesh.bufferMesh();
+		m_hasMesh = true;
+	}
 }
 
 ChunkBlock ChunkSection::getBlock(int x, int y, int z)const
@@ -28,7 +39,7 @@ ChunkBlock ChunkSection::getBlock(int x, int y, int z)const
 	}
 	return m_blocks[getIndex(x, y, z)];
 }
-const sf::Vector3i ChunkSection::getLocation() const
+const sf::Vector3i ChunkSection::getLocation() const noexcept
 {
 	return m_location;
 }
@@ -50,4 +61,17 @@ bool ChunkSection::outOfBounds(int value)
 int ChunkSection::getIndex(int x, int y, int z)
 {
 	return y * CHUNK_AREA + z * CHUNK_SIZE + x;
+}
+
+bool ChunkSection::hashMesh() const noexcept
+{
+	return m_hasMesh;
+}
+void ChunkSection::meshed()
+{
+	m_hasMesh = true;
+}
+const ChunkMesh& ChunkSection::getMesh() const 
+{
+	return m_mesh;
 }

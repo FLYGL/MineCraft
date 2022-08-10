@@ -3,19 +3,18 @@
 #include <vector>
 
 #include "Chunk/Chunk.h"
+#include "Chunk/ChunkManager.h"
 
 class RenderMaster;
 
-class World : IChunk
+class World
 {
 public:
 	World();
-	ChunkBlock getBlock(int x, int y, int z) const override;
-	void setBlock(int x, int y, int z, ChunkBlock block) override;
+	ChunkBlock getBlock(int x, int y, int z) ;
+	bool setBlock(int x, int y, int z, ChunkBlock block);
 	void renderWorld(RenderMaster& master);
-	void editBlock(int x, int y, int z, ChunkBlock block);
-	void AddBlock(int x, int y, int z, ChunkBlock block);
 private:
-	std::vector<Chunk> m_chunks;
-	std::vector<Chunk*> m_changedChunks;
+	ChunkManager m_chunkManager;
+	std::unordered_set<sf::Vector3i> m_rebuildChunks;
 };

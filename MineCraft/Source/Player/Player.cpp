@@ -44,7 +44,7 @@ namespace
 }
 Player::Player()
 {
-	position = { -5,5,5 };
+	position = { 50,16*3.5,50 };
 	m_velocity = { 0,0,0 };
 	rotation = { 0,0,0 };
 }
@@ -105,8 +105,8 @@ void Player::mouseInput(const sf::RenderWindow& window)
 	static auto lastMousePosition = sf::Mouse::getPosition(window);
 	auto change = sf::Mouse::getPosition() - lastMousePosition;
 
-	rotation.y += -change.x * 0.05;
-	rotation.x += -change.y * 0.05;
+	rotation.y += static_cast<float>(-change.x) * 0.05f;
+	rotation.x += static_cast<float>(-change.y) * 0.05f;
 	if (rotation.x > BOUND) rotation.x = BOUND;
 	else if (rotation.x < -BOUND) rotation.x = -BOUND;
 
@@ -128,38 +128,37 @@ void Player::mouseClick(World& world)
 	{
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
-			for (Ray ray(position, rotation); ray.getLength() < 6; ray.step(0.1))
+			for (Ray ray(position, rotation); ray.getLength() < 6; ray.step(0.1f))
 			{
-				int x = ray.getEnd().x;
-				int y = ray.getEnd().y;
-				int z = ray.getEnd().z;
+				auto end = ray.getEnd();
+				int x = static_cast<int>(end.x);
+				int y = static_cast<int>(end.y);
+				int z = static_cast<int>(end.z);
 
 				auto block = world.getBlock(x, y, z);
 				if (block != BlockId::Air)
 				{
 					timer.restart();
-					world.editBlock(x, y, z, BlockId::Air);
+					world.setBlock(x, y, z, BlockId::Air);
 					break;
 				}
 			}
 		}
 		else if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
 		{
-			for (Ray ray(position, rotation); ray.getLength() < 6; ray.step(0.1))
+			for (Ray ray(position, rotation); ray.getLength() < 6; ray.step(0.1f))
 			{
-				int x = ray.getEnd().x;
-				int y = ray.getEnd().y;
-				int z = ray.getEnd().z;
+				auto end = ray.getEnd();
+				int x = static_cast<int>(end.x);
+				int y = static_cast<int>(end.y);
+				int z = static_cast<int>(end.z);
 
 				auto block = world.getBlock(x, y, z);
 				if (block != BlockId::Air)
 				{
 					timer.restart();
-					glm::vec3 newBlockPosition = GetNewBlockPosition({ x,y,z }, position);
-					//if (newBlockPosition != glm::vec3(x, y, z))
-					//{
-					//}
-					world.AddBlock(newBlockPosition.x, newBlockPosition.y, newBlockPosition.z, BlockId::Grass);
+					glm::u32vec3 newBlockPosition = GetNewBlockPosition({ x,y,z }, position);
+					world.setBlock(newBlockPosition.x, newBlockPosition.y, newBlockPosition.z, BlockId::Grass);
 					break;
 				}
 			}

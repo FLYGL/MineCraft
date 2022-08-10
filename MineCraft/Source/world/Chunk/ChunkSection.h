@@ -12,10 +12,13 @@ class ChunkSection : public IChunk
 {
 public:
 	ChunkSection(const sf::Vector3i& position,World& world);
-	void setBlock(int x, int y, int z, ChunkBlock block) override;
+	bool setBlock(int x, int y, int z, ChunkBlock block) override;
 	ChunkBlock getBlock(int x, int y, int z) const override;
-	const sf::Vector3i getLocation() const;
-	ChunkMesh m_mesh;
+	const sf::Vector3i getLocation() const noexcept;
+	bool hashMesh() const noexcept;
+	void meshed();
+	void makeMesh();
+	const ChunkMesh& getMesh() const;
 private:
 	static bool outOfBounds(int value);
 	static int getIndex(int x, int y, int z);
@@ -23,5 +26,7 @@ private:
 	std::array<ChunkBlock, CHUNK_VOLUME> m_blocks;
 	sf::Vector3i m_location;
 	World* m_pWorld;
+	ChunkMesh m_mesh;
+	bool m_hasMesh = false;
 };
 

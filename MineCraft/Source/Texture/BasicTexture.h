@@ -4,7 +4,7 @@
 #include "../Util/NonCopyable.h"
 #include <SFML/Graphics.hpp>
 
-class BasicTexture
+class BasicTexture : public NonCopyable
 {
 public:
 	BasicTexture() = default;

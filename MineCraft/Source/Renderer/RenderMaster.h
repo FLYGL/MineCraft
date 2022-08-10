@@ -4,6 +4,8 @@
 #include "QuadRenderer.h"
 #include "CubeRenderer.h"
 #include "ChunkRenderer.h"
+#include "SkyboxRenderer.h"
+
 
 class Camera;
 class ChunkMesh;
@@ -18,4 +20,5 @@ private:
 	QuadRenderer m_quadRenderer;
 	CubeRenderer m_cubeRenderer;
 	ChunkRenderer m_chunkRenderer;
+	SkyboxRenderer m_skyboxRenderer;
 };

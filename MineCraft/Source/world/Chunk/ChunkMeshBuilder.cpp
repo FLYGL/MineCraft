@@ -59,7 +59,8 @@ namespace
     };
 }
 
-ChunkMeshBuilder::ChunkMeshBuilder(ChunkSection& chunk):m_pChunk(&chunk)
+ChunkMeshBuilder::ChunkMeshBuilder(ChunkSection& chunk, ChunkMesh& mesh) :
+    m_pChunk(&chunk), m_pMesh(&mesh)
 {
 }
 
@@ -84,12 +85,10 @@ struct AdjacentBlockPositions
 
 int faces = 0;
 
-void ChunkMeshBuilder::buildMesh(ChunkMesh& mesh)
+void ChunkMeshBuilder::buildMesh()
 {
     sf::Clock c;
     std::cout << "Begin mesh build\n";
-    m_pMesh = &mesh;
-
     AdjacentBlockPositions directions;
     for(int8_t  y = 0; y < CHUNK_SIZE ; ++y)
         for(int8_t  x = 0; x < CHUNK_SIZE; ++x)

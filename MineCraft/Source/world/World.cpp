@@ -1,13 +1,10 @@
 #include "World.h"
-
 #include "../Renderer/RenderMaster.h"
+#include "../Maths/Vector2XZ.h"
+
 namespace
 {
 	constexpr int temp_worldSize = 8;
-	struct VectorXZ
-	{
-		int x, z;
-	};
 	VectorXZ getBlockXZ(int x, int z)
 	{
 		return {
@@ -33,55 +30,42 @@ namespace
 	}
 }
 
-World::World() 
+World::World():m_chunkManager(*this)
 {
 	for (int x = 0; x < temp_worldSize; x++)
 	{
 		for (int z = 0; z < temp_worldSize; z++)
 		{
-			m_chunks.emplace_back(*this, sf::Vector2i(x, z));
+			m_chunkManager.newChunk(x, z)->load();
 		}
 	}
-	for (auto& chunk : m_chunks)
+	for (int x = 0; x < temp_worldSize; x++)
 	{
-		chunk.makeAllMeshtemp();
+		for (int z = 0; z < temp_worldSize; z++)
+		{
+			m_chunkManager.makeMesh(x, z);
+		}
 	}
 }
 
-void World::setBlock(int x, int y, int z, ChunkBlock block)
+bool World::setBlock(int x, int y, int z, ChunkBlock block)
 {
 	auto bp = getBlockXZ(x, z);
 	auto cp = getChunkXZ(x, z);
 	if (isOutOfBounds(cp))
 	{
-		return;
+		return false;
 	}
-	m_chunks.at(cp.x * temp_worldSize + cp.z).setBlock(bp.x, y, bp.z, block);
-}
-
-void World::editBlock(int x, int y, int z, ChunkBlock block)
-{
-
-	auto bp = getBlockXZ(x, z);
-	auto cp = getChunkXZ(x, z);
-	if (isOutOfBounds(cp))
+	auto chunk = m_chunkManager.getChunk(cp.x, cp.z);
+	bool success = chunk->setBlock(bp.x, y, bp.z, block);
+	if (chunk->hashLoaded() && success)
 	{
-		return;
+		m_rebuildChunks.emplace(cp.x, y / CHUNK_SIZE, cp.z);
 	}
-	setBlock(x, y, z, block);
-	m_changedChunks.push_back(&m_chunks.at(cp.x * temp_worldSize + cp.z));
+	return success;
 }
 
-void World::AddBlock(int x, int y, int z, ChunkBlock block)
-{
-	ChunkBlock chunkBlock = getBlock(x, y, z);
-	if (chunkBlock.getBlockId() == BlockId::Air)
-	{
-		editBlock(x, y, z, block);
-	}
-}
-
-ChunkBlock World::getBlock(int x, int y, int z) const
+ChunkBlock World::getBlock(int x, int y, int z)
 {
 	auto bp = getBlockXZ(x, z);
 	auto cp = getChunkXZ(x, z);
@@ -89,18 +73,19 @@ ChunkBlock World::getBlock(int x, int y, int z) const
 	{
 		return BlockId::Air;
 	}
-	return m_chunks.at(cp.x * temp_worldSize + cp.z).getBlock(bp.x, y, bp.z);
+	return m_chunkManager.getChunk(cp.x,cp.z)->getBlock(bp.x, y, bp.z);
 }
-
 void World::renderWorld(RenderMaster& renderer)
 {
-	for (auto& chunk : m_changedChunks)
+	for (auto& location : m_rebuildChunks)
 	{
-		chunk->makeAllMeshtemp();
+		ChunkSection& section = m_chunkManager.getChunk(location.x, location.z)->getSection(location.y);
+		section.makeMesh();
 	}
-	m_changedChunks.clear();
-	for (auto& chunk : m_chunks)
+	m_rebuildChunks.clear();
+	const auto& chunkMap = m_chunkManager.getChunks();
+	for (const auto& chunk : chunkMap)
 	{
-		chunk.drawChunks(renderer);
+		chunk.second.drawChunks(renderer);
 	}
 }
