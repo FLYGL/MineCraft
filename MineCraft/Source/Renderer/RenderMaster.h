@@ -5,13 +5,14 @@
 #include "CubeRenderer.h"
 #include "ChunkRenderer.h"
 #include "SkyboxRenderer.h"
-
+#include "SFMLRenderer.h"
 
 class Camera;
 class ChunkMesh;
 class RenderMaster
 {
 public:
+	void drawSFML(const sf::Drawable& drawable);
 	void drawQuad(const glm::vec3& pos);
 	void drawCube(const glm::vec3& pos);
 	void drawChunk(const ChunkMesh& mesh);
@@ -21,4 +22,5 @@ private:
 	CubeRenderer m_cubeRenderer;
 	ChunkRenderer m_chunkRenderer;
 	SkyboxRenderer m_skyboxRenderer;
+	SFMLRenderer m_sfmlRenderer;
 };

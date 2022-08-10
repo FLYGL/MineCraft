@@ -14,6 +14,8 @@ public:
 		const sf::Vector3i& blockPosition);
 	void bufferMesh();
 	const Model& getModel() const;
+
+	int faces = 0;
 private:
 	Mesh m_mesh;
 	Model m_model;

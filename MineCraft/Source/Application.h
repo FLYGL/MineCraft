@@ -22,10 +22,11 @@ public:
 		//What mean: forward?
 		m_states.push_back(std::make_unique<T>(std::forward<Args>(args)...));
 		auto& s = m_states.back();
+		s->onOpen();
 	}
-
 	void popState();
-
+	void turnOffMouse();
+	void turnOnMouse();
 	Camera& getCamera() { return m_camera; }
 
 	const sf::RenderWindow& getWindow() const { return m_context.window; }

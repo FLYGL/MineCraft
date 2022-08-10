@@ -18,6 +18,8 @@ public:
 
 	virtual void render(RenderMaster& renderer) = 0;
 
+	virtual void onOpen() = 0;
+
 protected:
 	Application* m_pApplication;
 };

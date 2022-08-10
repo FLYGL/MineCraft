@@ -1,9 +1,11 @@
 #include "RenderMaster.h"
-
 #include <SFML/Graphics.hpp>
-
 #include <iostream>
 
+void RenderMaster::drawSFML(const sf::Drawable& drawable)
+{
+	m_sfmlRenderer.add(drawable);
+}
 void RenderMaster::drawQuad(const glm::vec3& pos)
 {
 	m_quadRenderer.add(pos);
@@ -16,7 +18,10 @@ void RenderMaster::drawCube(const glm::vec3& pos)
 
 void RenderMaster::drawChunk(const ChunkMesh& mesh)
 {
-	m_chunkRenderer.add(mesh);
+	if (mesh.faces > 0)
+	{
+		m_chunkRenderer.add(mesh);
+	}
 }
 
 void RenderMaster::finishRender(sf::RenderWindow& window, const Camera& camera)
@@ -29,5 +34,6 @@ void RenderMaster::finishRender(sf::RenderWindow& window, const Camera& camera)
 	m_cubeRenderer.render(camera);
 	m_chunkRenderer.render(camera);
 	m_skyboxRenderer.render(camera);
+	m_sfmlRenderer.render(window);
 	window.display();
 }

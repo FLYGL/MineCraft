@@ -18,5 +18,5 @@ Context::Context()
 	glViewport(0, 0, 1280, 720);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
-	window.setFramerateLimit(144);
+	//window.setFramerateLimit(144);
 }
