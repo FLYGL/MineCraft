@@ -21,6 +21,7 @@ public:
 	const ChunkManager& getChunkManager() const;
 	static VectorXZ getBlockXZ(int x, int z);
 	static VectorXZ getChunkXZ(int x, int z);
+	static VectorXZ getChunkXZ(float x, float z);
 	template<typename T,typename... Args>
 	void addEvent(Args&&... args)
 	{
@@ -29,4 +30,6 @@ public:
 private:
 	std::vector<std::unique_ptr<IWorldEvent>> m_events;
 	ChunkManager m_chunkManager;
+	VectorXZ minRenderPosition;
+	VectorXZ maxRenderPosition;
 };

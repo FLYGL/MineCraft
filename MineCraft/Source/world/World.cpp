@@ -1,10 +1,12 @@
 #include "World.h"
 #include "../Renderer/RenderMaster.h"
 #include "../Maths/Vector2XZ.h"
+#include "../Camera.h"
 
 namespace
 {
 	constexpr int temp_worldSize = 16;
+	constexpr int renderDistance = 8;
 	bool isOutOfBounds(const VectorXZ& chunkPos)
 	{
 		if (chunkPos.x < 0) return true;
@@ -27,7 +29,7 @@ bool World::setBlock(int x, int y, int z, ChunkBlock block)
 	auto cp = getChunkXZ(x, z);
 	if (isOutOfBounds(cp))
 	{
-		return false;
+		//return false;
 	}
 	return m_chunkManager.getChunk(cp.x, cp.z).setBlock(bp.x, y, bp.z, block);
 }
@@ -38,7 +40,8 @@ ChunkBlock World::getBlock(int x, int y, int z)
 	auto cp = getChunkXZ(x, z);
 	if (isOutOfBounds(cp))
 	{
-		return BlockId::Air;
+		//return BlockId::Air;
+		//不返回，生成新的区域块，新的块只有位置信息。 没有load（没有地形以及面的信息），没有申请GPU buffer。
 	}
 	return m_chunkManager.getChunk(cp.x,cp.z).getBlock(bp.x, y, bp.z);
 }
@@ -50,11 +53,20 @@ void World::update(const Camera& camera)
 		event->handle(*this);
 	}
 	m_events.clear();
-	for (int x = 0; x < temp_worldSize; x++)
+	VectorXZ cp = getChunkXZ(camera.position.x, camera.position.z);
+	int minX = cp.x - renderDistance;
+	int maxX = cp.x + renderDistance;
+	int minZ = cp.z - renderDistance;
+	int maxZ = cp.z + renderDistance;
+	minRenderPosition.x = minX;
+	minRenderPosition.z = minZ;
+	maxRenderPosition.x = maxX;
+	maxRenderPosition.z = maxZ;
+	for (int x = minX; x < maxX; x++)
 	{
-		for (int z = 0; z < temp_worldSize; z++)
+		for (int z = minZ; z < maxZ; z++)
 		{
-			if (!m_chunkManager.chunkExistsAt(x, z))
+			if (!m_chunkManager.chunkLoadedAt(x, z))
 			{
 				m_chunkManager.loadChunk(x, z);
 			}
@@ -65,11 +77,18 @@ void World::update(const Camera& camera)
 
 void World::renderWorld(RenderMaster& renderer)
 {
-	//renderer.drawSky();
-	auto& chunkMap = m_chunkManager.getChunks();
-	for (auto& chunk : chunkMap)
+	//auto& chunkMap = m_chunkManager.getChunks();
+	//for (auto& chunk : chunkMap)
+	//{
+	//	chunk.second.drawChunks(renderer);
+	//}
+	for (int x = minRenderPosition.x; x < maxRenderPosition.x; x++)
 	{
-		chunk.second.drawChunks(renderer);
+		for (int z = minRenderPosition.z; z < maxRenderPosition.z; z++)
+		{
+			auto& chunk = m_chunkManager.getChunk(x, z);
+			chunk.drawChunks(renderer);
+		}
 	}
 }
 
@@ -88,14 +107,24 @@ VectorXZ World::getBlockXZ(int x, int z)
 			z<0?z+CHUNK_SIZE:z
 	};
 }
-
 VectorXZ World::getChunkXZ(int x, int z)
 {
-	x = x < 0 ? (int)std::floor((double)x / (double)CHUNK_SIZE) : x / CHUNK_SIZE;
-	z = z < 0 ? (int)std::floor((double)z / (double)CHUNK_SIZE) : z/ CHUNK_SIZE;
+	x = x < 0 ? (int)std::floor((float)x / (float)CHUNK_SIZE) : x / CHUNK_SIZE;
+	z = z < 0 ? (int)std::floor((float)z / (float)CHUNK_SIZE) : z/ CHUNK_SIZE;
 	return
 	{
 		x ,
 		z 
+	};
+}
+
+VectorXZ World::getChunkXZ(float x, float z)
+{
+	x = x < 0 ? std::floor(x / (float)CHUNK_SIZE) : x / CHUNK_SIZE;
+	z = z < 0 ? std::floor(z / (float)CHUNK_SIZE) : z / CHUNK_SIZE;
+	return
+	{
+		(int) x ,
+		(int) z
 	};
 }
