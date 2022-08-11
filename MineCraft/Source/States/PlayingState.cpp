@@ -1,11 +1,15 @@
 #include "PlayingState.h"
-
-#include "../Renderer/RenderMaster.h"
 #include "../Application.h"
+#include "../Renderer/RenderMaster.h"
 
 StatePlaying::StatePlaying(Application& app):StateBase(app)
 {
 	app.getCamera().hookEntity(m_player);
+	m_chTexture.loadFromFile("Res/Textures/ch.png");
+	m_crosshair.setTexture(&m_chTexture);
+	m_crosshair.setSize({ 20,20 });
+	m_crosshair.setOrigin(m_crosshair.getGlobalBounds().width / 2, m_crosshair.getGlobalBounds().height / 2);
+	m_crosshair.setPosition(app.getWindow().getSize().x / 2, app.getWindow().getSize().y / 2);
 }
 
 void StatePlaying::handleEvent(sf::Event e)
@@ -27,6 +31,7 @@ void StatePlaying::update(float deltaTime)
 
 void StatePlaying::render(RenderMaster& renderer)
 {
+	renderer.drawSFML(m_crosshair);
 	m_world.renderWorld(renderer);
 	m_fpsCounter.draw(renderer);
 }

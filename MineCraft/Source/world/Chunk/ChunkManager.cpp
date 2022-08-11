@@ -5,24 +5,20 @@ ChunkManager::ChunkManager(World& world):m_world(&world)
 
 }
 
-const std::unordered_map<VectorXZ, Chunk>& ChunkManager::getChunks()const
+ChunkMap& ChunkManager::getChunks()
 {
 	return m_chunks;
 }
 
-Chunk* ChunkManager::getChunk(int x, int z)
+Chunk& ChunkManager::getChunk(int x, int z)
 {
-	Chunk* res = nullptr;
-	if (m_chunks.find({ x,z }) != m_chunks.end())
+	VectorXZ key{ x,z };
+	if (!chunkExistsAt(x,z))
 	{
-		VectorXZ key{ x,z };
-		res = &m_chunks.at({ x,z });
+		Chunk chunk{ *m_world, {x, z} };
+		m_chunks.emplace(key, std::move(chunk));
 	}
-	else
-	{
-		res = newChunk(x, z);
-	}
-	return res;
+	return m_chunks.at(key);
 }
 Chunk* ChunkManager::newChunk(int x, int z)
 {
@@ -40,10 +36,35 @@ Chunk* ChunkManager::newChunk(int x, int z)
 
 bool ChunkManager::makeMesh(int x, int z)
 {
-	Chunk* pChunk = getChunk(x, z);
-	if (pChunk)
+	for (int nx = -1; nx <= 1; nx++)
+		for (int nz = -1; nz <= 1; nz++)
+		{
+			getChunk(x + nz, z + nz).load();
+		}
+	return getChunk(x, z).makeMesh();
+}
+
+bool ChunkManager::chunkLoadedAt(int x, int z) const
+{
+	if (!chunkExistsAt(x, z))
 	{
-		return pChunk->makeMesh();
+		return false;
 	}
-	return false;
+	return m_chunks.at({ x,z }).hashLoaded();
+}
+
+bool ChunkManager::chunkExistsAt(int x, int z) const
+{
+	return m_chunks.find({ x,z }) != m_chunks.end();
+}
+
+void ChunkManager::loadChunk(int x, int z)
+{
+	getChunk(x, z).load();
+}
+
+void ChunkManager::unloadChunk(int x, int z)
+{
+	//getChunk(x,z)
+	//TODO
 }

@@ -1,7 +1,8 @@
 #include "Player.h"
 #include "../Maths/Ray.h"
 #include "../world/Block/BlockId.h"
-#include <iostream>
+#include "../world/Event/PlayerDigEvent.h"
+
 namespace
 {
 	glm::vec3 GetNewBlockPosition(const glm::vec3& blockPosition,glm::vec3 playerPosition)
@@ -66,7 +67,7 @@ void Player::keyboardInput()
 	float speed = 0.5;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
 	{
-		speed = speed * 3;
+		speed = speed * 10;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
@@ -139,7 +140,8 @@ void Player::mouseClick(World& world)
 				if (block != BlockId::Air)
 				{
 					timer.restart();
-					world.setBlock(x, y, z, BlockId::Air);
+					//world.setBlock(x, y, z, BlockId::Air);
+					world.addEvent<PlayerDigEvent>(sf::Mouse::Left, glm::vec3{ x,y,z }, *this);
 					break;
 				}
 			}
@@ -158,7 +160,8 @@ void Player::mouseClick(World& world)
 				{
 					timer.restart();
 					glm::u32vec3 newBlockPosition = GetNewBlockPosition({ x,y,z }, position);
-					world.setBlock(newBlockPosition.x, newBlockPosition.y, newBlockPosition.z, BlockId::Grass);
+					world.addEvent<PlayerDigEvent>(sf::Mouse::Right, newBlockPosition, *this);
+					//world.setBlock(newBlockPosition.x, newBlockPosition.y, newBlockPosition.z, BlockId::Stone);
 					break;
 				}
 			}

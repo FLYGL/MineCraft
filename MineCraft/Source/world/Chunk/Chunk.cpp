@@ -20,11 +20,14 @@ bool Chunk::makeMesh()
 }
 bool Chunk::setBlock(int x, int y, int z, ChunkBlock block)
 {
+	// 确保足够的y 高度 有 chunksection
+	addSectionIndexTarget(y);
 	if (outOfBound(x, y, z))
 	{
 		return false;
 	}
 	int bY = y % CHUNK_SIZE;
+
 	return m_chunks.at(y / CHUNK_SIZE).setBlock(x, bY, z,block);
 }
 
@@ -35,12 +38,16 @@ ChunkBlock Chunk::getBlock(int x, int y, int z) const
 	return m_chunks.at(y / CHUNK_SIZE).getBlock(x, bY, z);
 }
 
-void Chunk::drawChunks(RenderMaster& renderer) const
+void Chunk::drawChunks(RenderMaster& renderer)
 {
-	for (const auto& chunk : m_chunks)
+	for (auto& chunk : m_chunks)
 	{
 		if (chunk.hashMesh())
 		{
+			if (!chunk.hashBuffered())
+			{
+				chunk.bufferMesh();;
+			}
 			renderer.drawChunk(chunk.getMesh());
 		}
 	}
@@ -53,8 +60,10 @@ bool Chunk::hashLoaded()const
 
 void Chunk::load()
 {
+	if (hashLoaded()) return;
+	static int seed = RandomSingleton::get().intInRange(444, 4444);
 	static Random<std::minstd_rand> rand((m_location.x ^ m_location.y) << 2);
-	NoiseGenerator temp_noiseGen(6345);
+	NoiseGenerator temp_noiseGen(seed);
 	std::array<int, CHUNK_AREA> heightMap;
 	std::vector<sf::Vector3i> treelocations;
 
@@ -68,6 +77,8 @@ void Chunk::load()
 			maxValue = std::max(maxValue, h);
 		}
 	}
+
+
 	int sectionNumber = maxValue / CHUNK_SIZE + 1;
 	int maxHeight = sectionNumber * CHUNK_SIZE;
 	for (int y = 0; y < sectionNumber; y++)
@@ -86,11 +97,15 @@ void Chunk::load()
 			{
 				setBlock(x, y, z, BlockId::Dirt);
 			}
-			setBlock(x, h, z, BlockId::Grass);
-			if (rand.intInRange(0, 100) == 10)
+			if (h > WATER_LEVEL)
 			{
-				treelocations.emplace_back(x, h, z);
+				setBlock(x, h, z, BlockId::Grass);
+				if (rand.intInRange(0, 100) == 10)
+				{
+					treelocations.emplace_back(x, h, z);
+				}
 			}
+			else setBlock(x, h, z, BlockId::Dirt);
 		}
 	for (auto& tree : treelocations)
 	{
@@ -129,9 +144,25 @@ const sf::Vector2i& Chunk::getLocation()const
 
 ChunkSection& Chunk::getSection(int index)
 {
-	while (index >= m_chunks.size())
-	{
-		m_chunks.emplace_back(sf::Vector3i(m_location.x, m_chunks.size(), m_location.y), *m_pWorld);
-	}
 	return m_chunks.at(index);
+}
+
+void Chunk::addSection()
+{
+	int y = m_chunks.size();
+	m_chunks.emplace_back(sf::Vector3i(m_location.x, y, m_location.y), *m_pWorld);
+}
+
+void Chunk::addSectionBlockTarget(int blockY)
+{
+	int index = blockY / CHUNK_SIZE;
+	addSectionIndexTarget(index);
+}
+
+void Chunk::addSectionIndexTarget(int index)
+{
+	while (m_chunks.size() < index + 1)
+	{
+		addSection();
+	}
 }

@@ -16,7 +16,9 @@ public:
 	ChunkBlock getBlock(int x, int y, int z) const override;
 	const sf::Vector3i getLocation() const noexcept;
 	bool hashMesh() const noexcept;
+	bool hashBuffered() const noexcept;
 	void makeMesh();
+	void bufferMesh();
 	const ChunkMesh& getMesh() const;
 private:
 	static bool outOfBounds(int value);
@@ -27,5 +29,6 @@ private:
 	World* m_pWorld;
 	ChunkMesh m_mesh;
 	bool m_hasMesh = false;
+	bool m_hasBufferedMesh = false;
 };
 

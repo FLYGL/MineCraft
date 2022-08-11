@@ -10,9 +10,9 @@ ChunkBlock::ChunkBlock(BlockId id) : id(static_cast<Block_t>(id))
 
 }
 
-const BlockData& ChunkBlock::getData()const
+const BlockDataHolder& ChunkBlock::getData()const
 {
-	return BlockDatabase::get().getData(static_cast<BlockId>(id));
+	return BlockDatabase::get().getData(static_cast<BlockId>(id)).getBlockData();
 }
 
 const BlockType& ChunkBlock::getType() const
