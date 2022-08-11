@@ -1,6 +1,7 @@
 #include "Chunk.h"
 #include "../../Renderer/RenderMaster.h"
-
+#include "../../Maths/NoiseGenerator.h"
+#include "../../Util/Random.h"
 Chunk::Chunk(World& world,const sf::Vector2i& location): m_location(location), m_pWorld(&world)
 {
 }
@@ -52,28 +53,45 @@ bool Chunk::hashLoaded()const
 
 void Chunk::load()
 {
-	for (int y = 0; y < 3; y++)
+	static Random<std::minstd_rand> rand(500);
+	NoiseGenerator temp_noiseGen(6345);
+	std::array<int, CHUNK_AREA> heightMap;
+	std::vector<sf::Vector3i> treelocations;
+
+	int maxValue = 0;
+	for (int x = 0; x < CHUNK_SIZE; x++)
+	{
+		for (int z = 0; z < CHUNK_SIZE; z++)
+		{
+			int h = temp_noiseGen.getHeight(x, z, m_location.x, m_location.y);
+			heightMap[x * CHUNK_SIZE + z] = h;
+			maxValue = std::max(maxValue, h);
+		}
+	}
+	int sectionNumber = maxValue / CHUNK_SIZE + 1;
+	for (int y = 0; y < sectionNumber; y++)
 	{
 		m_chunks.emplace_back(sf::Vector3i(m_location.x, y, m_location.y), *m_pWorld);
 	}
-
-	int h = m_chunks.size() * CHUNK_SIZE - 1;
-	for (int y = 0; y < m_chunks.size() * CHUNK_SIZE; y++)
-		for (int x = 0; x < CHUNK_SIZE; x++)
-			for (int z = 0; z < CHUNK_SIZE; z++)
+	for(int x = 0; x <CHUNK_SIZE; x++)
+		for (int z = 0; z < CHUNK_SIZE; z++)
+		{
+			int h = heightMap[x * CHUNK_SIZE + z];
+			for (int y = 0; y < h; y++)
 			{
-				if (y == h)
-				{
-					setBlock(x, y, z, BlockId::Grass);
-				}
-				else if (y > h - 3)
-				{
-					setBlock(x, y, z, BlockId::Dirt);
-				}
-				else {
-					setBlock(x, y, z, BlockId::Stone);
-				}
+				setBlock(x, y, z, BlockId::Dirt);
 			}
+			setBlock(x, h, z, BlockId::Grass);
+			for (int y = h+1; y < sectionNumber*CHUNK_SIZE; y++)
+			{
+				setBlock(x, y, z, BlockId::Air);
+			}
+		}
+	//TODO
+	for (auto& tree : treelocations)
+	{
+
+	}
 	m_isLoaded = true;
 }
 

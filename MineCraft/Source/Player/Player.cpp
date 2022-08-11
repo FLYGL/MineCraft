@@ -44,7 +44,7 @@ namespace
 }
 Player::Player()
 {
-	position = { 50,16*3.5,50 };
+	position = { 50,200,50 };
 	m_velocity = { 0,0,0 };
 	rotation = { 0,0,0 };
 }
