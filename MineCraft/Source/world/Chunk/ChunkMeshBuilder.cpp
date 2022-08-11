@@ -110,9 +110,7 @@ void ChunkMeshBuilder::buildMesh()
                 tryAddFaceToMesh(rightFace, data.texSideCoord, position, directions.right);
                 tryAddFaceToMesh(leftFace, data.texSideCoord, position, directions.left);
                 tryAddFaceToMesh(topFace, data.texTopCoord, position, directions.up);
-                //TODO 
-                //if ((y == 0) && (m_pChunk->getLocation().y > 0))
-                    tryAddFaceToMesh(bottomFace, data.texBottomCoord, position, directions.down);
+                tryAddFaceToMesh(bottomFace, data.texBottomCoord, position, directions.down);
             }
     std::cout << "End mesh build, faces: " << faces << " Time: " << c.getElapsedTime().asMilliseconds() << "ms\n";
 }

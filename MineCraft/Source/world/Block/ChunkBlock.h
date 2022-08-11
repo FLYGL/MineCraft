@@ -27,5 +27,5 @@ struct ChunkBlock
 		return id != other.id;
 	}
 
-	Block_t id = 1;
+	Block_t id = 0;
 };

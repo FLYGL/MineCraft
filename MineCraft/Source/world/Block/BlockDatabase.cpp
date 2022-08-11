@@ -6,6 +6,8 @@ BlockDatabase::BlockDatabase():textureAtlas("DefaultPack")
 	m_blocks[static_cast<int>(BlockId::Grass)] = std::make_unique<DefaultBlock>("Grass");
 	m_blocks[static_cast<int>(BlockId::Dirt)] = std::make_unique<DefaultBlock>("Dirt");
 	m_blocks[static_cast<int>(BlockId::Stone)] = std::make_unique<DefaultBlock>("Stone");
+	m_blocks[static_cast<int>(BlockId::OakBark)] = std::make_unique<DefaultBlock>("OakBark");
+	m_blocks[static_cast<int>(BlockId::OakLeaf)] = std::make_unique<DefaultBlock>("OakLeaf");
 }
 // TODO : 这种static 什么时候初始化
 BlockDatabase& BlockDatabase::get() 
