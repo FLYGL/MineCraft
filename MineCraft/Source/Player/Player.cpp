@@ -2,14 +2,17 @@
 #include "../Maths/Ray.h"
 #include "../world/Block/BlockId.h"
 #include "../world/Event/PlayerDigEvent.h"
-
+#include <iostream>
 namespace
 {
 	glm::vec3 GetNewBlockPosition(const glm::vec3& blockPosition,glm::vec3 playerPosition)
 	{
 		//变化坐标系
-		playerPosition -= blockPosition+glm::vec3(-0.5f,0.5f,0.5f);
+		playerPosition -= (blockPosition+glm::vec3(0.5f,0.5f,0.5f));
 		glm::vec3 absPositon = glm::abs(playerPosition);
+		std::cout << "Block: " << blockPosition.x << " " << blockPosition.y << " " << blockPosition.z << std::endl;
+		std::cout <<"Abs: " << absPositon.x << " " << absPositon.y << " " << absPositon.z << std::endl;
+		std::cout <<"Player: "<< playerPosition.x <<" "<< playerPosition.y<<" "<< playerPosition.z <<std::endl;
 		// 在 x方向
 		if (absPositon.x > absPositon.y && absPositon.x > absPositon.z)
 		{
@@ -42,12 +45,24 @@ namespace
 		}
 		return blockPosition;
 	}
+	bool IsInteract(glm::vec3 blockPosition,Player& player)
+	{
+		glm::vec3 maxPlayerPosition = player.position + player.box.dimensions;
+		glm::vec3 minPlayerPosition = player.position - player.box.dimensions;
+		glm::vec3 maxBlockPosition = blockPosition + glm::vec3(1, 1, 1);
+		if (maxBlockPosition.x >= minPlayerPosition.x && maxBlockPosition.y >= minPlayerPosition.y &&
+			maxBlockPosition.z >= minPlayerPosition.z && maxBlockPosition.x <= maxPlayerPosition.x &&
+			maxBlockPosition.y <= maxPlayerPosition.y && maxBlockPosition.z <= maxPlayerPosition.z) return true;
+		if (blockPosition.x >= minPlayerPosition.x && blockPosition.y >= minPlayerPosition.y &&
+			blockPosition.z >= minPlayerPosition.z && blockPosition.x <= maxPlayerPosition.x &&
+			blockPosition.y <= maxPlayerPosition.y && blockPosition.z <= maxPlayerPosition.z) return true;
+		return false;
+	}
 }
-Player::Player()
+Player::Player() : 
+	Entity( { 0,1000,0 } , { 0,0,0 },  {0.5f,1.f,0.5f})
 {
-	position = { 50,200,50 };
-	m_velocity = { 0,0,0 };
-	rotation = { 0,0,0 };
+	
 }
 void Player::handleInput(const sf::RenderWindow& window, World& world)
 {
@@ -56,10 +71,60 @@ void Player::handleInput(const sf::RenderWindow& window, World& world)
 	mouseClick(world);
 }
 
-void Player::update(float dt)
+void Player::update(float dt,World& world)
 {
-	position += m_velocity * dt;
-	m_velocity *= 0.95;
+	if (!m_isOnGround)
+	{
+		velocity.y -= 45 * dt;
+	}
+	m_isOnGround = false;
+	box.update(position);
+	velocity.x *= 0.95;
+	velocity.z *= 0.95;
+
+	position.x += velocity.x * dt;
+	collide(world, { velocity.x,0,0 }, dt);
+	
+	position.z += velocity.z * dt;
+	collide(world, { 0,0,velocity.z }, dt);
+
+	position.y += velocity.y * dt;
+	collide(world, { 0,velocity.y,0 }, dt);
+}
+void Player::collide(World& world, const glm::vec3& vel, float dt)
+{
+	auto& d = box.dimensions;
+	auto& p = position;
+	auto& v = vel;
+	for(int x = std::floor(p.x - d.x); x <= std::floor(p.x + d.x) ; x++)
+		for(int z = std::floor(p.z - d.z); z <= std::floor(p.z + d.z); z++)
+			for (int y = std::floor(p.y - d.y); y <= std::floor(p.y + d.y); y++)
+			{
+				auto block = world.getBlock(x, y, z);
+				if (block != BlockId::Air)
+				{
+					if (v.x > 0) p.x = x - d.x-0.001;
+					else if (v.x < 0) p.x =x + d.x + 1+0.001;
+					if (v.y > 0) {
+						p.y = y - d.y - 0.001;
+						velocity.y = 0;
+					}
+					else if (v.y < 0)
+					{
+						p.y = y + d.y + 1+0.001;
+						velocity.y = 0;
+						m_isOnGround = true;
+					}
+					if (v.z > 0)
+					{
+						p.z = z - d.z - 0.001;
+					}
+					else if (v.z < 0)
+					{
+						p.z =z + d.z + 1+0.001;
+					}
+				}
+			}	
 }
 void Player::keyboardInput()
 {
@@ -67,7 +132,7 @@ void Player::keyboardInput()
 	float speed = 0.5;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
 	{
-		speed = speed * 10;
+		speed = speed * 2;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
@@ -89,16 +154,15 @@ void Player::keyboardInput()
 		change.x = glm::sin(glm::radians(rotation.y+90)) * speed;
 		change.z = glm::cos(glm::radians(rotation.y+90)) * speed;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_isOnGround)
 	{
-		change.y += speed;
+		change.y += speed * 50;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 	{
 		change.y -= speed;
 	}
-
-	m_velocity += change;
+	velocity += change;
 }
 void Player::mouseInput(const sf::RenderWindow& window)
 {
@@ -132,15 +196,16 @@ void Player::mouseClick(World& world)
 			for (Ray ray(position, rotation); ray.getLength() < 6; ray.step(0.1f))
 			{
 				auto end = ray.getEnd();
-				int x = static_cast<int>(end.x);
-				int y = static_cast<int>(end.y);
-				int z = static_cast<int>(end.z);
+				int x = std::floor(end.x);
+				int y = std::floor(end.y);
+				int z = std::floor(end.z);
 
 				auto block = world.getBlock(x, y, z);
 				if (block != BlockId::Air)
 				{
 					timer.restart();
 					//world.setBlock(x, y, z, BlockId::Air);
+
 					world.addEvent<PlayerDigEvent>(sf::Mouse::Left, glm::vec3{ x,y,z }, *this);
 					break;
 				}
@@ -151,17 +216,21 @@ void Player::mouseClick(World& world)
 			for (Ray ray(position, rotation); ray.getLength() < 6; ray.step(0.1f))
 			{
 				auto end = ray.getEnd();
-				int x = static_cast<int>(end.x);
-				int y = static_cast<int>(end.y);
-				int z = static_cast<int>(end.z);
+				int x = std::floor(end.x);
+				int y = std::floor(end.y);
+				int z = std::floor(end.z);
 
 				auto block = world.getBlock(x, y, z);
 				if (block != BlockId::Air)
 				{
 					timer.restart();
-					glm::u32vec3 newBlockPosition = GetNewBlockPosition({ x,y,z }, position);
-					world.addEvent<PlayerDigEvent>(sf::Mouse::Right, newBlockPosition, *this);
-					//world.setBlock(newBlockPosition.x, newBlockPosition.y, newBlockPosition.z, BlockId::Stone);
+					glm::vec3 newBlockPosition = GetNewBlockPosition({ x,y,z }, end);
+					// 判断是否有足够的空间
+					if (!IsInteract(newBlockPosition,*this))
+					{
+						world.addEvent<PlayerDigEvent>(sf::Mouse::Right, newBlockPosition, *this);
+					}
+					else std::cout << "No Spare Space to place the block" << std::endl;
 					break;
 				}
 			}

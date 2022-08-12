@@ -5,16 +5,9 @@
 
 namespace
 {
-	constexpr int temp_worldSize = 16;
-	constexpr int renderDistance = 8;
-	bool isOutOfBounds(const VectorXZ& chunkPos)
-	{
-		if (chunkPos.x < 0) return true;
-		if (chunkPos.z < 0) return true;
-		if (chunkPos.x >= temp_worldSize) return true;
-		if (chunkPos.z >= temp_worldSize) return true;
-		return false;
-	}
+	constexpr int renderDistance = 5;
+	// what means
+	constexpr float GRAV = -3;
 }
 
 World::World():m_chunkManager(*this)
@@ -27,10 +20,6 @@ bool World::setBlock(int x, int y, int z, ChunkBlock block)
 	if (y <= 0) return false;
 	auto bp = getBlockXZ(x, z);
 	auto cp = getChunkXZ(x, z);
-	if (isOutOfBounds(cp))
-	{
-		//return false;
-	}
 	return m_chunkManager.getChunk(cp.x, cp.z).setBlock(bp.x, y, bp.z, block);
 }
 
@@ -38,11 +27,7 @@ ChunkBlock World::getBlock(int x, int y, int z)
 {
 	auto bp = getBlockXZ(x, z);
 	auto cp = getChunkXZ(x, z);
-	if (isOutOfBounds(cp))
-	{
-		//return BlockId::Air;
-		//不返回，生成新的区域块，新的块只有位置信息。 没有load（没有地形以及面的信息），没有申请GPU buffer。
-	}
+	//生成新的区域块，新的块只有位置信息。 没有load（没有地形以及面的信息），没有申请GPU buffer。
 	return m_chunkManager.getChunk(cp.x,cp.z).getBlock(bp.x, y, bp.z);
 }
 
@@ -53,6 +38,7 @@ void World::update(const Camera& camera)
 		event->handle(*this);
 	}
 	m_events.clear();
+	updateChunks();
 	VectorXZ cp = getChunkXZ(camera.position.x, camera.position.z);
 	int minX = cp.x - renderDistance;
 	int maxX = cp.x + renderDistance;
@@ -66,10 +52,6 @@ void World::update(const Camera& camera)
 	{
 		for (int z = minZ; z < maxZ; z++)
 		{
-			if (!m_chunkManager.chunkLoadedAt(x, z))
-			{
-				m_chunkManager.loadChunk(x, z);
-			}
 			if (m_chunkManager.makeMesh(x, z)) return;
 		}
 	}
@@ -77,11 +59,6 @@ void World::update(const Camera& camera)
 
 void World::renderWorld(RenderMaster& renderer)
 {
-	//auto& chunkMap = m_chunkManager.getChunks();
-	//for (auto& chunk : chunkMap)
-	//{
-	//	chunk.second.drawChunks(renderer);
-	//}
 	for (int x = minRenderPosition.x; x < maxRenderPosition.x; x++)
 	{
 		for (int z = minRenderPosition.z; z < maxRenderPosition.z; z++)
@@ -90,6 +67,62 @@ void World::renderWorld(RenderMaster& renderer)
 			chunk.drawChunks(renderer);
 		}
 	}
+}
+
+void World::updateChunk(int blockX, int blockY, int blockZ)
+{
+	auto addChunkToUpdateBatch = [&](const sf::Vector3i& key, ChunkSection& section)
+	{
+		m_chunkUpdates.emplace(key, &section);
+	};
+	auto cp = getChunkXZ(blockX, blockZ);
+	auto cy = blockY / CHUNK_SIZE;
+	sf::Vector3i key(cp.x, cy, cp.z);
+	addChunkToUpdateBatch(key, m_chunkManager.getChunk(cp.x, cp.z).getSection(cy));
+	auto sectionBlockXZ = getBlockXZ(blockX, blockZ);
+	auto sectionBlockY = blockY % CHUNK_SIZE;
+	if (sectionBlockXZ.x == 0)
+	{
+		sf::Vector3i newKey(cp.x - 1, cy, cp.z);
+		addChunkToUpdateBatch(newKey, m_chunkManager.getChunk(newKey.x, newKey.z).getSection(newKey.y));
+	}
+	else if (sectionBlockXZ.x == CHUNK_SIZE - 1)
+	{
+		sf::Vector3i newKey(cp.x + 1, cy, cp.z);
+		addChunkToUpdateBatch(newKey, m_chunkManager.getChunk(newKey.x, newKey.z).getSection(newKey.y));
+	}
+
+	if (sectionBlockY == 0)
+	{
+		sf::Vector3i newKey(cp.x, cy-1, cp.z);
+		addChunkToUpdateBatch(newKey, m_chunkManager.getChunk(newKey.x, newKey.z).getSection(newKey.y));
+	}
+	else if (sectionBlockY == CHUNK_SIZE - 1)
+	{
+		sf::Vector3i newKey(cp.x, cy + 1, cp.z);
+		addChunkToUpdateBatch(newKey, m_chunkManager.getChunk(newKey.x, newKey.z).getSection(newKey.y));
+	}
+
+	if (sectionBlockXZ.z == 0)
+	{
+		sf::Vector3i newKey(cp.x , cy, cp.z - 1);
+		addChunkToUpdateBatch(newKey, m_chunkManager.getChunk(newKey.x, newKey.z).getSection(newKey.y));
+	}
+	else if (sectionBlockXZ.z == CHUNK_SIZE - 1)
+	{
+		sf::Vector3i newKey(cp.x, cy, cp.z + 1);
+		addChunkToUpdateBatch(newKey, m_chunkManager.getChunk(newKey.x, newKey.z).getSection(newKey.y));
+	}
+}
+
+void World::updateChunks()
+{
+	for (auto& chunk : m_chunkUpdates)
+	{
+		ChunkSection& s = *chunk.second;
+		s.makeMesh();
+	}
+	m_chunkUpdates.clear();
 }
 
 const ChunkManager& World::getChunkManager() const

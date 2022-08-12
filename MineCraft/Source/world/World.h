@@ -9,6 +9,8 @@
 
 class RenderMaster;
 class Camera;
+class Entity;
+
 class World
 {
 public:
@@ -16,8 +18,8 @@ public:
 	ChunkBlock getBlock(int x, int y, int z) ;
 	bool setBlock(int x, int y, int z, ChunkBlock block);
 	void update(const Camera& camera);
+	void updateChunk(int blockX, int blockY, int blockZ);
 	void renderWorld(RenderMaster& master);
-
 	const ChunkManager& getChunkManager() const;
 	static VectorXZ getBlockXZ(int x, int z);
 	static VectorXZ getChunkXZ(int x, int z);
@@ -27,8 +29,11 @@ public:
 	{
 		m_events.push_back(std::make_unique<T>(std::forward<Args>(args)...));
 	}
+	void collisionTest(Entity& entity);
 private:
+	void updateChunks();
 	std::vector<std::unique_ptr<IWorldEvent>> m_events;
+	std::unordered_map<sf::Vector3i, ChunkSection*> m_chunkUpdates;
 	ChunkManager m_chunkManager;
 	VectorXZ minRenderPosition;
 	VectorXZ maxRenderPosition;

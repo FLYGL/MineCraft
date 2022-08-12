@@ -16,7 +16,6 @@ bool ChunkSection::setBlock(int x, int y, int z, ChunkBlock block)
 		return m_pWorld->setBlock(location.x, location.y, location.z, block);
 	}
 	m_hasMesh = false;
-	m_hasBufferedMesh = false;
 	m_blocks[getIndex(x, y, z)] = block;
 	return true;
 }
@@ -24,6 +23,7 @@ bool ChunkSection::setBlock(int x, int y, int z, ChunkBlock block)
 void ChunkSection::makeMesh()
 {
 	ChunkMeshBuilder(*this, m_mesh).buildMesh();
+	m_hasBufferedMesh = false;
 	m_hasMesh = true;
 }
 
