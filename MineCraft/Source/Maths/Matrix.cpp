@@ -3,13 +3,14 @@
 #include "../Camera.h"
 #include "../Entity.h"
 
+//TODO 关于模型空间旋转问题。
 glm::mat4 makeModelMatrix(const Entity& entity)
 {
 	glm::mat4 matrix(1.0f);
 	matrix = glm::translate(matrix, entity.position);
-	matrix = glm::rotate(matrix, glm::radians(entity.rotation.x), { 1,0,0 });
-	matrix = glm::rotate(matrix, glm::radians(entity.rotation.y), { 0,1,0 });
 	matrix = glm::rotate(matrix, glm::radians(entity.rotation.z), { 0,0,1 });
+	matrix = glm::rotate(matrix, glm::radians(entity.rotation.y), { 0,1,0 });
+	matrix = glm::rotate(matrix, glm::radians(entity.rotation.x), { 1,0,0 });
 	return matrix;
 }
 

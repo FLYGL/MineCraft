@@ -5,10 +5,12 @@
 class ItemStack
 {
 public:
-	ItemStack(Material material, int amount);
-	void add(int amount);
+	ItemStack(const Material& material, int amount);
+	int add(int amount);
 	void remove();
+	int getNumInStack() const;
+	const Material& getMaterial() const;
 private:
-	Material m_material;
-	int numInStack;
+	const Material* m_pMaterial = &Material::NOTHING;
+	int m_numInStack = 0;
 };

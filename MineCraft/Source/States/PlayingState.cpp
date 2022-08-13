@@ -36,6 +36,7 @@ void StatePlaying::render(RenderMaster& renderer)
 	m_fpsCounter.draw(renderer);
 	renderer.drawSFML(m_crosshair);
 	m_world.renderWorld(renderer);
+	m_player.draw(renderer);
 }
 
 void StatePlaying::onOpen()

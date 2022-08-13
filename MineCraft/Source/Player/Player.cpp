@@ -1,8 +1,12 @@
+#include <iostream>
 #include "Player.h"
 #include "../Maths/Ray.h"
 #include "../world/Block/BlockId.h"
 #include "../world/Event/PlayerDigEvent.h"
-#include <iostream>
+#include "../Renderer/RenderMaster.h"
+
+sf::Font f;
+
 namespace
 {
 	glm::vec3 GetNewBlockPosition(const glm::vec3& blockPosition,glm::vec3 playerPosition)
@@ -60,12 +64,28 @@ namespace
 	}
 }
 Player::Player() : 
-	Entity( { 25,500,25 } , { 0,0,0 },  {0.5f,1.5f,0.5f})
+	Entity( { 25,100,25 } , { 0,0,0 },  {0.5f,1.5f,0.5f}),
+	m_itemUp(sf::Keyboard::Up),
+	m_itemDown(sf::Keyboard::Down)
 {
-	
+	f.loadFromFile("Res/Fonts/rs.ttf");
+	for (int i = 0; i < 5; i++)
+	{
+		m_items.emplace_back(Material::NOTHING, 0);
+	}
+	for (int i = 0; i < 5; i++)
+	{
+		sf::Text t;
+		t.setFont(f);
+		t.setOutlineColor(sf::Color::Black);
+		t.setCharacterSize(25);
+		t.setPosition(20, 20 * i + 100);
+		m_itemText.push_back(t);
+	}
 }
 void Player::handleInput(const sf::RenderWindow& window, World& world)
 {
+	itemUpdate();
 	keyboardInput();
 	mouseInput(window);
 	mouseClick(world);
@@ -240,3 +260,58 @@ void Player::mouseClick(World& world)
 	}
 }
 
+void Player::itemUpdate()
+{
+	if (m_itemDown.isKeyPressed())
+	{
+		m_heldItem++;
+		if (m_heldItem == m_items.size()) m_heldItem = 0;
+	}
+	else if (m_itemUp.isKeyPressed())
+	{
+		m_heldItem--;
+		if (m_heldItem == -1) m_heldItem = m_items.size() - 1;
+	}
+}
+
+void Player::addItem(const Material& material)
+{
+	Material::ID id = material.id;
+	for (int i = 0; i < m_items.size(); i++)
+	{
+		if (m_items[i].getMaterial().id == id)
+		{
+			int leftOver = m_items[i].add(1);
+			return;
+		}
+		else if (m_items[i].getMaterial().id == Material::ID::Nothing)
+		{
+			m_items[i] = { material , 1 };
+			return;
+		}
+	}
+	//TODO 没有确定没有空间 怎么办 目前是相当于没有加入
+}
+
+ItemStack& Player::getHeldItems()
+{
+	return m_items[m_heldItem];
+}
+
+void Player::draw(RenderMaster& master)
+{
+	for (int i = 0; i < m_items.size(); i++)
+	{
+		sf::Text& t = m_itemText[i];
+		if (i == m_heldItem)
+		{
+			t.setFillColor(sf::Color::Red);
+		}
+		else
+		{
+			t.setFillColor(sf::Color::White);
+		}
+		t.setString((m_items[i].getMaterial().name) + " " + std::to_string(m_items[i].getNumInStack()));
+		master.drawSFML(t);
+	}
+}
