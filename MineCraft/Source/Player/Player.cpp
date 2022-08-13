@@ -60,7 +60,7 @@ namespace
 	}
 }
 Player::Player() : 
-	Entity( { 0,1000,0 } , { 0,0,0 },  {0.5f,1.f,0.5f})
+	Entity( { 25,500,25 } , { 0,0,0 },  {0.5f,1.5f,0.5f})
 {
 	
 }
@@ -75,7 +75,8 @@ void Player::update(float dt,World& world)
 {
 	if (!m_isOnGround)
 	{
-		velocity.y -= 45 * dt;
+		//velocity.y -= 55 * dt;
+		velocity.y *= 0.95;
 	}
 	m_isOnGround = false;
 	box.update(position);
@@ -93,6 +94,7 @@ void Player::update(float dt,World& world)
 }
 void Player::collide(World& world, const glm::vec3& vel, float dt)
 {
+	// TODO 0.001 是为了保证碰撞计算的浮点数问题，float->int 
 	auto& d = box.dimensions;
 	auto& p = position;
 	auto& v = vel;
@@ -156,7 +158,7 @@ void Player::keyboardInput()
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_isOnGround)
 	{
-		change.y += speed * 50;
+		change.y += speed * 35;
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 	{

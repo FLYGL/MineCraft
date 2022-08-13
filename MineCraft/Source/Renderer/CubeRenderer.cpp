@@ -80,9 +80,9 @@ CubeRenderer::CubeRenderer():m_atlasTest("DefaultPack")
 	m_cubeModel.addData({ vertexCoords, texCoords, indices });
 }
 
-void CubeRenderer::add(const glm::vec3& position)
+void CubeRenderer::add(const Entity& entity)
 {
-	m_cubes.push_back(position);
+	m_cubes.push_back(&entity);
 }
 
 void CubeRenderer::render(const Camera& camera)
@@ -96,7 +96,7 @@ void CubeRenderer::render(const Camera& camera)
 
 	for (auto& cube : m_cubes)
 	{
-		m_shader.loadModelMatrix(makeModelMatrix({ cube,{0,0,0} }));
+		m_shader.loadModelMatrix(makeModelMatrix({*cube}));
 		GL::drawElements(m_cubeModel.getIndicesCount());
 	}
 

@@ -7,6 +7,7 @@
 #include "SkyboxRenderer.h"
 #include "SFMLRenderer.h"
 
+
 class Camera;
 class ChunkMesh;
 class RenderMaster
@@ -14,7 +15,7 @@ class RenderMaster
 public:
 	void drawSFML(const sf::Drawable& drawable);
 	void drawQuad(const glm::vec3& pos);
-	void drawCube(const glm::vec3& pos);
+	void drawCube(const Entity& cube);
 	void drawChunk(const ChunkMesh& mesh);
 	void finishRender(sf::RenderWindow& window, const Camera& camera);
 private:

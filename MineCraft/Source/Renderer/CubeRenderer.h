@@ -6,16 +6,17 @@
 #include "../Shaders/BasicShader.h"
 #include "../Texture/BasicTexture.h"
 #include "../Texture/TextureAtlas.h"
-
+#include "../Entity.h"
 class Camera;
+
 class CubeRenderer
 {
 public:
 	CubeRenderer();
-	void add(const glm::vec3& position);
+	void add(const Entity& entity);
 	void render(const Camera& camera);
 private:
-	std::vector<glm::vec3> m_cubes;
+	std::vector<const Entity*> m_cubes;
 	Model m_cubeModel;
 	BasicShader m_shader;
 	BasicTexture m_basicTexture;

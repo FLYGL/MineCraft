@@ -1,7 +1,8 @@
 #pragma once
-
-#include "../Entity.h"
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include "../Entity.h"
+#include "../Item/ItemStack.h"
 #include "../world/World.h"
 
 
@@ -17,5 +18,6 @@ private:
 	void mouseInput(const sf::RenderWindow& window);
 	void mouseClick(World& world);
 	bool m_isOnGround = false;
-	//glm::vec3 m_velocity;
+
+	std::vector<ItemStack> m_items;
 };
