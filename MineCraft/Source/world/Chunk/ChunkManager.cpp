@@ -9,7 +9,11 @@ ChunkMap& ChunkManager::getChunks()
 {
 	return m_chunks;
 }
-
+Chunk& ChunkManager::qGetChunk(int x, int z)
+{
+	VectorXZ key{ x,z };
+	return m_chunks.at(key);
+}
 Chunk& ChunkManager::getChunk(int x, int z)
 {
 	VectorXZ key{ x,z };

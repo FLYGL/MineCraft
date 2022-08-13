@@ -64,7 +64,7 @@ namespace
 	}
 }
 Player::Player() : 
-	Entity( { 25,100,25 } , { 0,0,0 },  {0.5f,1.5f,0.5f}),
+	Entity( { 25,500,25 } , { 0,0,0 },  {0.5f,1.5f,0.5f}),
 	m_itemUp(sf::Keyboard::Up),
 	m_itemDown(sf::Keyboard::Down)
 {
@@ -73,13 +73,13 @@ Player::Player() :
 	{
 		m_items.emplace_back(Material::NOTHING, 0);
 	}
-	for (int i = 0; i < 5; i++)
+	for (float i = 0; i < 5; i++)
 	{
 		sf::Text t;
 		t.setFont(f);
 		t.setOutlineColor(sf::Color::Black);
 		t.setCharacterSize(25);
-		t.setPosition(20, 20 * i + 100);
+		t.setPosition(20.f, 20.f * i + 100.f);
 		m_itemText.push_back(t);
 	}
 }
@@ -96,12 +96,12 @@ void Player::update(float dt,World& world)
 	if (!m_isOnGround)
 	{
 		//velocity.y -= 55 * dt;
-		velocity.y *= 0.95;
 	}
 	m_isOnGround = false;
 	box.update(position);
-	velocity.x *= 0.95;
-	velocity.z *= 0.95;
+	velocity.y *= 0.95f;
+	velocity.x *= 0.95f;
+	velocity.z *= 0.95f;
 
 	position.x += velocity.x * dt;
 	collide(world, { velocity.x,0,0 }, dt);
@@ -118,32 +118,32 @@ void Player::collide(World& world, const glm::vec3& vel, float dt)
 	auto& d = box.dimensions;
 	auto& p = position;
 	auto& v = vel;
-	for(int x = std::floor(p.x - d.x); x <= std::floor(p.x + d.x) ; x++)
-		for(int z = std::floor(p.z - d.z); z <= std::floor(p.z + d.z); z++)
-			for (int y = std::floor(p.y - d.y); y <= std::floor(p.y + d.y); y++)
+	for(int x = (int)std::floor(p.x - d.x); x <= (int)std::floor(p.x + d.x) ; x++)
+		for(int z = (int)std::floor(p.z - d.z); z <= (int)std::floor(p.z + d.z); z++)
+			for (int y = (int)std::floor(p.y - d.y); y <= (int)std::floor(p.y + d.y); y++)
 			{
 				auto block = world.getBlock(x, y, z);
 				if (block != BlockId::Air)
 				{
-					if (v.x > 0) p.x = x - d.x-0.001;
-					else if (v.x < 0) p.x =x + d.x + 1+0.001;
+					if (v.x > 0) p.x = x - d.x-0.001f;
+					else if (v.x < 0) p.x =x + d.x + 1.f+0.001f;
 					if (v.y > 0) {
-						p.y = y - d.y - 0.001;
-						velocity.y = 0;
+						p.y = y - d.y - 0.001f;
+						velocity.y = 0.f;
 					}
 					else if (v.y < 0)
 					{
-						p.y = y + d.y + 1+0.001;
-						velocity.y = 0;
+						p.y = y + d.y + 1.f+0.001f;
+						velocity.y = 0.f;
 						m_isOnGround = true;
 					}
 					if (v.z > 0)
 					{
-						p.z = z - d.z - 0.001;
+						p.z = z - d.z - 0.001f;
 					}
 					else if (v.z < 0)
 					{
-						p.z =z + d.z + 1+0.001;
+						p.z =z + d.z + 1.f+0.001f;
 					}
 				}
 			}	
@@ -176,7 +176,8 @@ void Player::keyboardInput()
 		change.x = glm::sin(glm::radians(rotation.y+90)) * speed;
 		change.z = glm::cos(glm::radians(rotation.y+90)) * speed;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_isOnGround)
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_isOnGround)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 	{
 		change.y += speed * 35;
 	}
@@ -218,16 +219,14 @@ void Player::mouseClick(World& world)
 			for (Ray ray(position, rotation); ray.getLength() < 6; ray.step(0.1f))
 			{
 				auto end = ray.getEnd();
-				int x = std::floor(end.x);
-				int y = std::floor(end.y);
-				int z = std::floor(end.z);
+				int x = (int)std::floor(end.x);
+				int y = (int)std::floor(end.y);
+				int z = (int)std::floor(end.z);
 
 				auto block = world.getBlock(x, y, z);
 				if (block != BlockId::Air)
 				{
 					timer.restart();
-					//world.setBlock(x, y, z, BlockId::Air);
-
 					world.addEvent<PlayerDigEvent>(sf::Mouse::Left, glm::vec3{ x,y,z }, *this);
 					break;
 				}
@@ -238,9 +237,9 @@ void Player::mouseClick(World& world)
 			for (Ray ray(position, rotation); ray.getLength() < 6; ray.step(0.1f))
 			{
 				auto end = ray.getEnd();
-				int x = std::floor(end.x);
-				int y = std::floor(end.y);
-				int z = std::floor(end.z);
+				int x = (int)std::floor(end.x);
+				int y = (int)std::floor(end.y);
+				int z = (int)std::floor(end.z);
 
 				auto block = world.getBlock(x, y, z);
 				if (block != BlockId::Air)
@@ -265,7 +264,7 @@ void Player::itemUpdate()
 	if (m_itemDown.isKeyPressed())
 	{
 		m_heldItem++;
-		if (m_heldItem == m_items.size()) m_heldItem = 0;
+		if (m_heldItem == (int)m_items.size()) m_heldItem = 0;
 	}
 	else if (m_itemUp.isKeyPressed())
 	{
@@ -277,7 +276,7 @@ void Player::itemUpdate()
 void Player::addItem(const Material& material)
 {
 	Material::ID id = material.id;
-	for (int i = 0; i < m_items.size(); i++)
+	for (unsigned i = 0; i < m_items.size(); i++)
 	{
 		if (m_items[i].getMaterial().id == id)
 		{
@@ -300,10 +299,10 @@ ItemStack& Player::getHeldItems()
 
 void Player::draw(RenderMaster& master)
 {
-	for (int i = 0; i < m_items.size(); i++)
+	for (unsigned i = 0; i < m_items.size(); i++)
 	{
 		sf::Text& t = m_itemText[i];
-		if (i == m_heldItem)
+		if (i ==(unsigned) m_heldItem)
 		{
 			t.setFillColor(sf::Color::Red);
 		}

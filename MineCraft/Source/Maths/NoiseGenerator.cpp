@@ -22,7 +22,7 @@ double NoiseGenerator::getNoise(int n) const
 
 double NoiseGenerator::getNoise(double x, double z) const
 {
-	return getNoise(x + z * 57);
+	return getNoise((int)(x + z * 57.0));
 }
 
 double NoiseGenerator::lerp(double a, double b, double z) const

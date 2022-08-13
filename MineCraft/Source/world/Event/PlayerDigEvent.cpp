@@ -23,11 +23,11 @@ void PlayerDigEvent::dig(World& world)
 	switch (m_buttonPress)
 	{
 	case sf::Mouse::Button::Left: {
-		auto block = world.getBlock(m_digSpot.x, m_digSpot.y, m_digSpot.z);
+		auto block = world.getBlock((int)m_digSpot.x, (int)m_digSpot.y, (int)m_digSpot.z);
 		const auto& material = Material::toMaterial((BlockId)block.id);
 		m_pPlayer->addItem(material);
-		world.updateChunk(m_digSpot.x, m_digSpot.y, m_digSpot.z);
-		world.setBlock(m_digSpot.x, m_digSpot.y, m_digSpot.z, BlockId::Air);
+		world.updateChunk((int)m_digSpot.x, (int)m_digSpot.y, (int)m_digSpot.z);
+		world.setBlock((int)m_digSpot.x, (int)m_digSpot.y, (int)m_digSpot.z, BlockId::Air);
 		break;
 	}
 	case sf::Mouse::Button::Right: {
@@ -39,8 +39,8 @@ void PlayerDigEvent::dig(World& world)
 		}
 		else {
 			stack.remove();
-			world.updateChunk(m_digSpot.x, m_digSpot.y, m_digSpot.z);
-			world.setBlock(m_digSpot.x, m_digSpot.y, m_digSpot.z, material.toBlockID());
+			world.updateChunk((int)m_digSpot.x, (int)m_digSpot.y, (int)m_digSpot.z);
+			world.setBlock((int)m_digSpot.x, (int)m_digSpot.y, (int)m_digSpot.z, material.toBlockID());
 			break;
 		}
 	}

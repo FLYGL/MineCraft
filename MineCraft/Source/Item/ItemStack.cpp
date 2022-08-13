@@ -59,4 +59,5 @@ const Material& Material::toMaterial(BlockId id)
 		case BlockId::OakLeaf:
 			return OAK_LEAF_BLOCK;
 	}
+	return NOTHING;
 }

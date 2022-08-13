@@ -19,5 +19,5 @@ Context::Context()
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 	//window.setFramerateLimit(144);
-	window.setVerticalSyncEnabled(true);
+	//window.setVerticalSyncEnabled(true);
 }

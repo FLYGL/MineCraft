@@ -28,14 +28,13 @@ bool Chunk::setBlock(int x, int y, int z, ChunkBlock block)
 	}
 	int bY = y % CHUNK_SIZE;
 
-	return m_chunks.at(y / CHUNK_SIZE).setBlock(x, bY, z,block);
+	return m_chunks[y / CHUNK_SIZE].setBlock(x, bY, z, block);
 }
-
 ChunkBlock Chunk::getBlock(int x, int y, int z) const
 {
 	if (outOfBound(x, y, z)) return BlockId::Air;
 	int bY = y % CHUNK_SIZE;
-	return m_chunks.at(y / CHUNK_SIZE).getBlock(x, bY, z);
+	return m_chunks[y / CHUNK_SIZE].getBlock(x, bY, z);
 }
 
 void Chunk::drawChunks(RenderMaster& renderer)
@@ -72,7 +71,7 @@ void Chunk::load()
 	{
 		for (int z = 0; z < CHUNK_SIZE; z++)
 		{
-			int h = temp_noiseGen.getHeight(x, z, m_location.x + 10, m_location.y + 10);
+			int h = (int)temp_noiseGen.getHeight(x, z, m_location.x + 10, m_location.y + 10);
 			heightMap[x * CHUNK_SIZE + z] = h;
 			maxValue = std::max(maxValue, h);
 		}
@@ -133,7 +132,7 @@ bool Chunk::outOfBound(int x, int y, int z) const noexcept
 	if (x >= CHUNK_SIZE) return true;
 	if (z >= CHUNK_SIZE) return true;
 	if (x < 0 || z < 0 || y < 0) return true;
-	if (y >= m_chunks.size() * CHUNK_SIZE) return true;
+	if (y >= (int)m_chunks.size() * CHUNK_SIZE) return true;
 	return false;
 }
 
@@ -144,6 +143,8 @@ const sf::Vector2i& Chunk::getLocation()const
 
 ChunkSection& Chunk::getSection(int index)
 {
+	static ChunkSection errorSection({ 444,444,444 }, *m_pWorld);
+	if (index >= (int) m_chunks.size() || index < 0) return errorSection;
 	return m_chunks.at(index);
 }
 
@@ -161,7 +162,7 @@ void Chunk::addSectionBlockTarget(int blockY)
 
 void Chunk::addSectionIndexTarget(int index)
 {
-	while (m_chunks.size() < index + 1)
+	while ((int)m_chunks.size() < index + 1)
 	{
 		addSection();
 	}

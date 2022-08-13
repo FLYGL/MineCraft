@@ -9,7 +9,7 @@ StatePlaying::StatePlaying(Application& app):StateBase(app)
 	m_crosshair.setTexture(&m_chTexture);
 	m_crosshair.setSize({ 20,20 });
 	m_crosshair.setOrigin(m_crosshair.getGlobalBounds().width / 2, m_crosshair.getGlobalBounds().height / 2);
-	m_crosshair.setPosition(app.getWindow().getSize().x / 2, app.getWindow().getSize().y / 2);
+	m_crosshair.setPosition(app.getWindow().getSize().x / 2.f, app.getWindow().getSize().y / 2.f);
 }
 
 void StatePlaying::handleEvent(sf::Event e)

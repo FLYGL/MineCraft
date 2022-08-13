@@ -3,8 +3,9 @@
 #include "Maths/Matrix.h"
 #include "Physics/AABB.h"
 
-struct Entity
+class Entity
 {
+public:
 	Entity() :box({0,0,0})
 	{}
 	Entity(const glm::vec3& pos, const glm::vec3& rot):
