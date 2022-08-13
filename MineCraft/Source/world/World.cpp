@@ -125,7 +125,7 @@ void World::updateChunks()
 	m_chunkUpdates.clear();
 }
 
-const ChunkManager& World::getChunkManager() const
+ChunkManager& World::getChunkManager()
 {
 	return m_chunkManager;
 }

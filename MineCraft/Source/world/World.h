@@ -20,7 +20,7 @@ public:
 	void update(const Camera& camera);
 	void updateChunk(int blockX, int blockY, int blockZ);
 	void renderWorld(RenderMaster& master);
-	const ChunkManager& getChunkManager() const;
+	ChunkManager& getChunkManager();
 	static VectorXZ getBlockXZ(int x, int z);
 	static VectorXZ getChunkXZ(int x, int z);
 	static VectorXZ getChunkXZ(float x, float z);

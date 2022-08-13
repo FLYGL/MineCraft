@@ -24,8 +24,9 @@ private:
         const sf::Vector3i& blockFacing);
     bool shouldMakeFace(const sf::Vector3i& blockPosition,
         const BlockDataHolder& blockData);
+    bool shouldMakeLayer(int y);
 
     ChunkMesh* m_pMesh = nullptr;
-    const ChunkSection* m_pChunk  = nullptr;
+    ChunkSection* m_pChunk  = nullptr;
     const BlockDataHolder* m_pBlockData = nullptr;
 };

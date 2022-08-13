@@ -90,9 +90,11 @@ void ChunkMeshBuilder::buildMesh()
     sf::Clock c;
     //std::cout << "Begin mesh build\n";
     AdjacentBlockPositions directions;
-    for(int8_t  y = 0; y < CHUNK_SIZE ; ++y)
-        for(int8_t  x = 0; x < CHUNK_SIZE; ++x)
-            for (int8_t  z = 0; z < CHUNK_SIZE; ++z)
+    for (int8_t y = 0; y < CHUNK_SIZE; ++y)
+    {
+        if (!shouldMakeLayer(y)) continue;
+        for (int8_t x = 0; x < CHUNK_SIZE; ++x)
+            for (int8_t z = 0; z < CHUNK_SIZE; ++z)
             {
                 sf::Vector3i position(x, y, z);
                 ChunkBlock block = m_pChunk->getBlock(x, y, z);
@@ -100,7 +102,7 @@ void ChunkMeshBuilder::buildMesh()
                 {
                     continue;
                 }
-                
+
                 m_pBlockData = &block.getData();
                 auto& data = *m_pBlockData;
                 directions.update(x, y, z);
@@ -112,6 +114,8 @@ void ChunkMeshBuilder::buildMesh()
                 tryAddFaceToMesh(topFace, data.texTopCoord, position, directions.up);
                 tryAddFaceToMesh(bottomFace, data.texBottomCoord, position, directions.down);
             }
+    }
+
     //std::cout << "End mesh build, faces: " << faces << " Time: " << c.getElapsedTime().asMilliseconds() << "ms\n";
 }
 
@@ -142,4 +146,17 @@ bool ChunkMeshBuilder::shouldMakeFace(const sf::Vector3i& blockPosition,
         return true;
     }
     return false;
+}
+
+bool ChunkMeshBuilder::shouldMakeLayer(int y)
+{
+    auto adjIsSolid = [&](int dx, int dz)
+    {
+        const ChunkSection& section = m_pChunk->getAdjacent(dx, dz);
+        return section.getLayer(y).isAllSolid();
+    };
+    return (!m_pChunk->getLayer(y).isAllSolid()) ||
+        (!m_pChunk->getLayer(y + 1).isAllSolid()) ||
+        (!m_pChunk->getLayer(y - 1).isAllSolid()) ||
+        (!adjIsSolid(1, 0)) || (!adjIsSolid(0, 1)) || (!adjIsSolid(-1, 0)) || (!adjIsSolid(0, -1));
 }
