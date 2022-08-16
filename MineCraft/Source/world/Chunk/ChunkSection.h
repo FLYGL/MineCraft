@@ -5,11 +5,13 @@
 #include "../WorldConstants.h"
 #include "IChunk.h"
 #include "ChunkMesh.h"
+#include "../../Physics/AABB.h"
 
 class World;
 
 class ChunkSection : public IChunk
 {
+	friend class Chunk;
 	class Layer
 	{
 	public:
@@ -47,12 +49,14 @@ public:
 private:
 	static bool outOfBounds(int value);
 	static int getIndex(int x, int y, int z);
+
 	sf::Vector3i toWorldPosition(int x, int y, int z) const noexcept;
 	std::array<Layer, CHUNK_SIZE> m_layers;
 	std::array<ChunkBlock, CHUNK_VOLUME> m_blocks;
 	sf::Vector3i m_location;
 	World* m_pWorld;
 	ChunkMesh m_mesh;
+	AABB m_aabb;
 	bool m_hasMesh = false;
 	bool m_hasBufferedMesh = false;
 };

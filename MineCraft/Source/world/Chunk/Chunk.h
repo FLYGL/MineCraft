@@ -5,6 +5,7 @@
 #include "ChunkSection.h"
 
 class RenderMaster;
+class Camera;
 
 class Chunk : public IChunk
 {
@@ -12,12 +13,14 @@ public:
 	Chunk(World& world,const sf::Vector2i& location);
 	bool setBlock(int x, int y, int z, ChunkBlock block) override;
 	ChunkBlock getBlock(int x, int y, int z) const override;
-	void drawChunks(RenderMaster& renderer);
+	void drawChunks(RenderMaster& renderer,const Camera& camera);
 	bool makeMesh();
 	bool hashLoaded() const;
 	void load();
 	ChunkSection& getSection(int index);
 	const sf::Vector2i& getLocation()const;
+	std::vector<ChunkSection>& testGetChunks();
+	int getSectionNumber();
 private:
 	void addSection();
 	void addSectionBlockTarget(int blockY);

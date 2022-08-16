@@ -4,8 +4,10 @@
 #include "ChunkMeshBuilder.h"
 #include <iostream>
 ChunkSection::ChunkSection(const sf::Vector3i& position, World& world):m_location(position),
-	m_pWorld(&world)
+	m_pWorld(&world),m_aabb({CHUNK_SIZE,CHUNK_SIZE,CHUNK_SIZE})
 { 
+	//¿¼ÂÇÕý¸ºÁË
+	m_aabb.update({ m_location.x * CHUNK_SIZE,m_location.y * CHUNK_SIZE,m_location.z * CHUNK_SIZE });
 }
 
 bool ChunkSection::setBlock(int x, int y, int z, ChunkBlock block)

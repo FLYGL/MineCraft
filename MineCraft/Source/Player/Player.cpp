@@ -95,7 +95,7 @@ void Player::update(float dt,World& world)
 {
 	if (!m_isOnGround)
 	{
-		//velocity.y -= 55 * dt;
+		velocity.y -= 55 * dt;
 	}
 	m_isOnGround = false;
 	box.update(position);
@@ -176,8 +176,7 @@ void Player::keyboardInput()
 		change.x = glm::sin(glm::radians(rotation.y+90)) * speed;
 		change.z = glm::cos(glm::radians(rotation.y+90)) * speed;
 	}
-	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_isOnGround)
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_isOnGround)
 	{
 		change.y += speed * 35;
 	}
@@ -203,7 +202,6 @@ void Player::mouseInput(const sf::RenderWindow& window)
 
 	auto cx = static_cast<int>(window.getSize().x / 2);
 	auto cy = static_cast<int>(window.getSize().y / 2);
-
 	sf::Mouse::setPosition({ cx,cy }, window);
 
 	lastMousePosition = sf::Mouse::getPosition();

@@ -3,11 +3,9 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include <GL/glew.h>
-
-class ChunkSection;
-class ChunkMesh;
-class BlockData;
-class BlockDataHolder;
+#include "../Block/BlockData.h"
+#include "ChunkMesh.h"
+#include "ChunkSection.h"
 
 class ChunkMeshBuilder
 {

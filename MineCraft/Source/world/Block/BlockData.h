@@ -4,7 +4,7 @@
 #include "../../Util/NonCopyable.h"
 #include "BlockId.h"
 
-struct BlockDataHolder : public NonCopyable
+struct BlockDataHolder :  public NonCopyable
 {
 	BlockId id;
 	sf::Vector2i texTopCoord;

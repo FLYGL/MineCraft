@@ -57,14 +57,14 @@ void World::update(const Camera& camera)
 	}
 }
 
-void World::renderWorld(RenderMaster& renderer)
+void World::renderWorld(RenderMaster& renderer,const Camera& camera)
 {
 	for (int x = minRenderPosition.x; x < maxRenderPosition.x; x++)
 	{
 		for (int z = minRenderPosition.z; z < maxRenderPosition.z; z++)
 		{
 			auto& chunk = m_chunkManager.getChunk(x, z);
-			chunk.drawChunks(renderer);
+			chunk.drawChunks(renderer,camera);
 		}
 	}
 }

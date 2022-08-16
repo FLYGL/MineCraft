@@ -1,8 +1,7 @@
 #pragma once
 
 #include "BlockId.h"
-
-class BlockDataHolder;
+#include "BlockData.h"
 class BlockType;
 
 struct ChunkBlock

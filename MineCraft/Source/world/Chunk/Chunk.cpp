@@ -1,7 +1,10 @@
+#include <iostream>
 #include "Chunk.h"
 #include "../../Renderer/RenderMaster.h"
 #include "../../Maths/NoiseGenerator.h"
 #include "../../Util/Random.h"
+#include "../../Camera.h"
+#include "../../Debug/Debug.h"
 Chunk::Chunk(World& world,const sf::Vector2i& location): m_location(location), m_pWorld(&world)
 {
 }
@@ -21,7 +24,7 @@ bool Chunk::makeMesh()
 bool Chunk::setBlock(int x, int y, int z, ChunkBlock block)
 {
 	// 确保足够的y 高度 有 chunksection
-	addSectionIndexTarget(y);
+	addSectionBlockTarget(y);
 	if (outOfBound(x, y, z))
 	{
 		return false;
@@ -37,17 +40,21 @@ ChunkBlock Chunk::getBlock(int x, int y, int z) const
 	return m_chunks[y / CHUNK_SIZE].getBlock(x, bY, z);
 }
 
-void Chunk::drawChunks(RenderMaster& renderer)
+void Chunk::drawChunks(RenderMaster& renderer,const Camera& camera)
 {
 	for (auto& chunk : m_chunks)
 	{
+		Debug::checkSectionNumber++;
 		if (chunk.hashMesh())
 		{
 			if (!chunk.hashBuffered())
 			{
 				chunk.bufferMesh();;
 			}
-			renderer.drawChunk(chunk.getMesh());
+			if (camera.getFrustum().isBoxInFrustum(chunk.m_aabb))
+			{
+				renderer.drawChunk(chunk.m_mesh);
+			}
 		}
 	}
 }
@@ -151,6 +158,10 @@ ChunkSection& Chunk::getSection(int index)
 void Chunk::addSection()
 {
 	int y = m_chunks.size();
+	if (y >= 32) {
+		std::cout << "Chunk Position" << m_location.x << " " << m_location.y << std::endl;
+		std::cout << "Section MaxHeight" << y << std::endl;
+	}
 	m_chunks.emplace_back(sf::Vector3i(m_location.x, y, m_location.y), *m_pWorld);
 }
 
@@ -166,4 +177,14 @@ void Chunk::addSectionIndexTarget(int index)
 	{
 		addSection();
 	}
+}
+
+std::vector<ChunkSection>& Chunk::testGetChunks()
+{
+	return m_chunks;
+}
+
+int Chunk::getSectionNumber()
+{
+	return (int)m_chunks.size();
 }

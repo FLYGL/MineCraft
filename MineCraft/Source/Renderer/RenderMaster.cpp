@@ -1,6 +1,7 @@
 #include "RenderMaster.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "../Debug/Debug.h"
 
 void RenderMaster::drawSFML(const sf::Drawable& drawable)
 {
@@ -36,4 +37,24 @@ void RenderMaster::finishRender(sf::RenderWindow& window, const Camera& camera)
 	m_skyboxRenderer.render(camera);
 	m_sfmlRenderer.render(window);
 	window.display();
+	//std::cout << std::endl << std::endl;
+	//std::cout << "One Frame ComparePlanesTimes: " << Debug::comparePlaneTimes << std::endl;       
+	//std::cout << "One Frame CompareBlockNumbers: " << Debug::compareBlockNumbers << std::endl;
+	//std::cout << " Distribute :" << std::endl;
+	//for (int i = 0; i < 6;i++)
+	//{
+	//	std::cout <<"\t" << i + 1 << " : " << Debug::comparePlaneDistrubute[i] << std::endl;
+	//}
+	//std::cout << "One Frame CompareSuccess: " << Debug::comparePlaneDistrubute[6] << std::endl;
+	//std::cout << "One Box Average CompareTimes:" << (float)Debug::comparePlaneTimes / (float)Debug::compareBlockNumbers << std::endl;
+	//std::cout << "One Frame RenderMeshNumber: " << Debug::renderBlockNumbers << std::endl;
+	//std::cout << "One Frame ChunkSectionNumber: " << Debug::checkSectionNumber << std::endl;
+	//std::cout << "One Frame NoneIndicesMeshNumber: " << Debug::noneIndicesNumbers << std::endl;
+	//Debug::comparePlaneTimes = 0;
+	//Debug::compareBlockNumbers = 0;
+	//Debug::checkSectionNumber = 0;
+	//for (int i = 0; i < 7;i++)
+	//{
+	//	Debug::comparePlaneDistrubute[i] = 0;
+	//}
 }

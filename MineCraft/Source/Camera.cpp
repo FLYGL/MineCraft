@@ -15,6 +15,7 @@ void Camera::update()
 	rotation = m_pEntity->rotation;
 	m_viewMatrix = makeViewMatrix(*this);
 	m_projViewMatrix = m_projectionMatrix * m_viewMatrix;
+	m_frustum.update(*this);
 }
 
 void Camera::hookEntity(const Entity& entity)
@@ -35,4 +36,9 @@ const glm::mat4& Camera::getProjMatrix() const noexcept
 const glm::mat4& Camera::getProjectionViewMatrix() const noexcept
 {
 	return m_projViewMatrix;
+}
+
+const ViewFrustum& Camera::getFrustum() const noexcept
+{
+	return m_frustum;
 }

@@ -1,10 +1,6 @@
-#include "ChunkMeshBuilder.h"
-
 #include <iostream>
-#include "ChunkSection.h"
-#include "ChunkMesh.h"
 
-#include "../Block/BlockData.h"
+#include "ChunkMeshBuilder.h"
 #include "../Block/BlockDatabase.h"
 
 
