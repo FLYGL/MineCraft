@@ -9,7 +9,7 @@
 
 namespace
 {
-	int seed = 333333;
+	int seed = RandomSingleton::get().intInRange(424, 325322);
 }
 
 NoiseGenerator TerrainGenerator::m_heightNoiseGen(seed);
@@ -79,16 +79,16 @@ void TerrainGenerator::getHeightMap()
 	constexpr static auto HALF_CHUNK = CHUNK_SIZE / 2;
 	constexpr static auto CHUNK = CHUNK_SIZE;
 	getHeightIn(0, 0, HALF_CHUNK, HALF_CHUNK);
-	getHeightIn(HALF_CHUNK, 0, CHUNK-1, HALF_CHUNK);
-	getHeightIn(0, HALF_CHUNK, HALF_CHUNK, CHUNK-1);
-	getHeightIn(HALF_CHUNK, HALF_CHUNK, CHUNK-1, CHUNK-1);
+	getHeightIn(HALF_CHUNK, 0, CHUNK, HALF_CHUNK);
+	getHeightIn(0, HALF_CHUNK, HALF_CHUNK, CHUNK);
+	getHeightIn(HALF_CHUNK, HALF_CHUNK, CHUNK, CHUNK);
 }
 
 void TerrainGenerator::getBiomeMap()
 {
 	auto location = m_pChunk->getLocation();
-	for (int x = 0; x < CHUNK_SIZE; x++)
-		for (int z = 0; z < CHUNK_SIZE; z++)
+	for (int x = 0; x < CHUNK_SIZE+1; x++)
+		for (int z = 0; z < CHUNK_SIZE+1; z++)
 		{
 			int h =(int) m_biomeNoiseGen.getHeight(x, z, location.x + 10, location.y + 10);
 			m_biomeMap[x * CHUNK_SIZE + z] = h;
@@ -138,7 +138,7 @@ void TerrainGenerator::setTopBlock(int x, int y, int z)
 
 const IBiome& TerrainGenerator::getBiome(int x, int z) const
 {
-	int biomeValue = m_biomeMap[x * CHUNK_SIZE + z];
+	int biomeValue = m_biomeMap[x * (CHUNK_SIZE+1) + z];
 	if (biomeValue > 155) return m_desertBiome;
 	if (biomeValue > 135) return m_lightForest;
 	return m_grassBiome;

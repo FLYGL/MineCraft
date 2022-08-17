@@ -30,7 +30,7 @@ private:
 
 	Chunk* m_pChunk = nullptr;
 	std::array<int, CHUNK_AREA> m_heightMap;
-	std::array<int, CHUNK_AREA> m_biomeMap;
+	std::array<int, (CHUNK_SIZE+1)*(CHUNK_SIZE+1)> m_biomeMap;
 
 	GrasslandBiome m_grassBiome;
 	LightForestBiome m_lightForest;
