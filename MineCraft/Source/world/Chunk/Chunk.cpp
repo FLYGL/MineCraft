@@ -44,7 +44,6 @@ void Chunk::drawChunks(RenderMaster& renderer,const Camera& camera)
 {
 	for (auto& chunk : m_chunks)
 	{
-		Debug::checkSectionNumber++;
 		if (chunk.hashMesh())
 		{
 			if (!chunk.hashBuffered())
@@ -143,11 +142,6 @@ bool Chunk::outOfBound(int x, int y, int z) const noexcept
 	return false;
 }
 
-const sf::Vector2i& Chunk::getLocation()const
-{
-	return m_location;
-}
-
 ChunkSection& Chunk::getSection(int index)
 {
 	static ChunkSection errorSection({ 444,444,444 }, *m_pWorld);
@@ -158,10 +152,6 @@ ChunkSection& Chunk::getSection(int index)
 void Chunk::addSection()
 {
 	int y = m_chunks.size();
-	if (y >= 32) {
-		std::cout << "Chunk Position" << m_location.x << " " << m_location.y << std::endl;
-		std::cout << "Section MaxHeight" << y << std::endl;
-	}
 	m_chunks.emplace_back(sf::Vector3i(m_location.x, y, m_location.y), *m_pWorld);
 }
 

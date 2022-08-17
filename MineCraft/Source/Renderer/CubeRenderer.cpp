@@ -87,7 +87,7 @@ void CubeRenderer::add(const Entity& entity)
 
 void CubeRenderer::render(const Camera& camera)
 {
-
+	if (m_cubes.empty()) return;
 	m_shader.useProgram();
 	m_cubeModel.bindVAO();
 	//m_basicTexture.bindTexture();

@@ -35,6 +35,8 @@ private:
 	std::vector<std::unique_ptr<IWorldEvent>> m_events;
 	std::unordered_map<sf::Vector3i, ChunkSection*> m_chunkUpdates;
 	ChunkManager m_chunkManager;
+
+	int m_loadDistance = 2;
 	VectorXZ minRenderPosition;
 	VectorXZ maxRenderPosition;
 };

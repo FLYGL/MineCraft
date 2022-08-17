@@ -14,9 +14,6 @@ namespace
 		//变化坐标系
 		playerPosition -= (blockPosition+glm::vec3(0.5f,0.5f,0.5f));
 		glm::vec3 absPositon = glm::abs(playerPosition);
-		std::cout << "Block: " << blockPosition.x << " " << blockPosition.y << " " << blockPosition.z << std::endl;
-		std::cout <<"Abs: " << absPositon.x << " " << absPositon.y << " " << absPositon.z << std::endl;
-		std::cout <<"Player: "<< playerPosition.x <<" "<< playerPosition.y<<" "<< playerPosition.z <<std::endl;
 		// 在 x方向
 		if (absPositon.x > absPositon.y && absPositon.x > absPositon.z)
 		{
@@ -64,7 +61,7 @@ namespace
 	}
 }
 Player::Player() : 
-	Entity( { 25,500,25 } , { 0,0,0 },  {0.5f,1.5f,0.5f}),
+	Entity( { 2500,500,2500 } , { 0,0,0 },  {0.5f,1.5f,0.5f}),
 	m_itemUp(sf::Keyboard::Up),
 	m_itemDown(sf::Keyboard::Down)
 {

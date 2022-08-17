@@ -18,7 +18,10 @@ public:
 	bool hashLoaded() const;
 	void load();
 	ChunkSection& getSection(int index);
-	const sf::Vector2i& getLocation()const;
+	const sf::Vector2i& getLocation()const noexcept
+	{
+		return m_location;
+	}
 	std::vector<ChunkSection>& testGetChunks();
 	int getSectionNumber();
 private:

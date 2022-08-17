@@ -33,6 +33,7 @@ void QuadRenderer::add(const glm::vec3 position)
 
 void QuadRenderer::render(const Camera& camera)
 {
+	if (m_quads.empty()) return;
 	m_shader.useProgram();
 	m_quadModel.bindVAO();
 	m_basicTexture.bindTexture();

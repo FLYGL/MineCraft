@@ -24,19 +24,6 @@ Chunk& ChunkManager::getChunk(int x, int z)
 	}
 	return m_chunks.at(key);
 }
-Chunk* ChunkManager::newChunk(int x, int z)
-{
-	Chunk* res = nullptr;
-	if (m_chunks.find({ x,z }) == m_chunks.end())
-	{
-		VectorXZ key{ x,z };
-		Chunk chunk{ *m_world,{x,z} };
-		m_chunks.emplace(key, std::move(chunk));
-		res = &m_chunks.at(key);
-		res->load();
-	}
-	return res;
-}
 
 bool ChunkManager::makeMesh(int x, int z)
 {

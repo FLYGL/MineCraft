@@ -5,7 +5,7 @@
 
 namespace
 {
-	constexpr int renderDistance =10;
+	constexpr int renderDistance =16;
 	// what means
 	constexpr float GRAV = -3;
 }
@@ -39,26 +39,39 @@ void World::update(const Camera& camera)
 	}
 	m_events.clear();
 	updateChunks();
+
+	bool isMeshMade = false;
 	VectorXZ cp = getChunkXZ(camera.position.x, camera.position.z);
-	int minX = cp.x - renderDistance;
-	int maxX = cp.x + renderDistance;
-	int minZ = cp.z - renderDistance;
-	int maxZ = cp.z + renderDistance;
-	minRenderPosition.x = minX;
-	minRenderPosition.z = minZ;
-	maxRenderPosition.x = maxX;
-	maxRenderPosition.z = maxZ;
-	for (int x = minX; x < maxX; x++)
+
+	for (int x = cp.x - m_loadDistance; x < cp.x + m_loadDistance; x++)
 	{
-		for (int z = minZ; z < maxZ; z++)
+		for (int z = cp.z - m_loadDistance; z < cp.z + m_loadDistance; z++)
 		{
-			if (m_chunkManager.makeMesh(x, z)) return;
+			if (m_chunkManager.makeMesh(x, z))
+			{
+				isMeshMade = true;
+				break;
+			}
 		}
+		if (isMeshMade) break;
 	}
+	if (!isMeshMade)
+	{
+		m_loadDistance++;
+	}
+	if (m_loadDistance >= renderDistance)
+	{
+		m_loadDistance = 2;
+	}
+	minRenderPosition.x = cp.x - renderDistance;
+	minRenderPosition.z = cp.z - renderDistance;
+	maxRenderPosition.x = cp.x + renderDistance;
+	maxRenderPosition.z = cp.z + renderDistance;
 }
 
 void World::renderWorld(RenderMaster& renderer,const Camera& camera)
 {
+	auto& chunkMap = m_chunkManager.getChunks();
 	for (int x = minRenderPosition.x; x < maxRenderPosition.x; x++)
 	{
 		for (int z = minRenderPosition.z; z < maxRenderPosition.z; z++)

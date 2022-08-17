@@ -10,20 +10,15 @@ void ChunkRenderer::add(const ChunkMesh& mesh)
 
 void ChunkRenderer::render(const Camera& camera)
 {
+	if (m_chunks.empty())return;
 	m_shader.useProgram();
 	BlockDatabase::get().textureAtlas.bindTexture();
 	m_shader.loadProjectionViewMatrix(camera.getProjectionViewMatrix());
-	Debug::renderBlockNumbers = m_chunks.size();
-	int tmp = 0;
 	for (const ChunkMesh* mesh : m_chunks)
 	{
 		const ChunkMesh& m = *mesh;
 		m.getModel().bindVAO();
-		if (m.getModel().getIndicesCount() <= 0) {
-			tmp++;
-		}
 		GL::drawElements(m.getModel().getIndicesCount());
 	}
-	Debug::noneIndicesNumbers = tmp;
 	m_chunks.clear();
 }
