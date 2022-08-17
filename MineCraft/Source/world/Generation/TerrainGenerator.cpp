@@ -5,16 +5,20 @@
 #include "../Chunk/Chunk.h"
 #include "../../Util/Random.h"
 #include "TreeGenerator.h"
+#include "../../Maths/GeneralMaths.h"
 
 namespace
 {
-	int seed = 50424;
+	int seed = 333333;
 }
 
 NoiseGenerator TerrainGenerator::m_heightNoiseGen(seed);
 NoiseGenerator TerrainGenerator::m_biomeNoiseGen(seed * 2);
 
-TerrainGenerator::TerrainGenerator()
+TerrainGenerator::TerrainGenerator() :
+	m_grassBiome(seed),
+	m_lightForest(seed),
+	m_desertBiome(seed)
 {
 	setUpNoise();
 }
@@ -26,21 +30,14 @@ void TerrainGenerator::setUpNoise()
 	{
 		std::cout << "make noise\n";
 		noiseGen = true;
-		NoiseParamters  heightParams;
-		heightParams.octaves = 7;
-		heightParams.amplitude = 70;
-		heightParams.smoothness = 235;
-		heightParams.heightOffset = -5;
-		heightParams.roughness = 0.53;
 
 		NoiseParamters biomePararms;
 		biomePararms.octaves = 5;
-		biomePararms.amplitude = 90;
+		biomePararms.amplitude = 125;
 		biomePararms.smoothness = 735;
 		biomePararms.heightOffset = -5;
 		biomePararms.roughness = 0.6;
 
-		m_heightNoiseGen.setParameters(heightParams);
 		m_biomeNoiseGen.setParameters(biomePararms);
 	}
 }
@@ -50,38 +47,52 @@ void TerrainGenerator::generateTerrainFor(Chunk& chunk)
 	m_pChunk = &chunk;
 	auto location = chunk.getLocation();
 	m_random.setSeed((location.x ^ location.y) << 2);
-	getHeightMap();
 	getBiomeMap();
+	getHeightMap();
 	setBlocks();
+}
+
+void TerrainGenerator::getHeightIn(int xMin, int zMin, int xMax, int zMax)
+{
+	auto getHeightAt = [&](int x, int z)
+	{
+		const IBiome& biome = getBiome(x, z);
+		return biome.getHeight(x, z, m_pChunk->getLocation().x, m_pChunk->getLocation().y);
+	};
+	int bottomLeft = getHeightAt(xMin, zMin);
+	int bottomRight = getHeightAt(xMax, zMin);
+	int topLeft = getHeightAt(xMin, zMax);
+	int topRight = getHeightAt(xMax, zMax);
+	for(int x = xMin; x<= xMax; x++)
+		for (int z = zMin; z <= zMax; z++)
+		{
+			if (x == CHUNK_SIZE) continue;
+			if (z == CHUNK_SIZE) continue;
+			int h = (int)billinearInterpolation((float)bottomLeft, (float)topLeft, (float)bottomRight,
+				(float)topRight, (float)xMin, (float)xMax, (float)zMin, (float)zMax, (float)x, (float)z);
+			m_heightMap[x * CHUNK_SIZE + z] = h;
+		}
 }
 
 void TerrainGenerator::getHeightMap()
 {
-	std::array<int, CHUNK_AREA> arr;
-	auto location = m_pChunk->getLocation();
-	for (int x = 0; x < CHUNK_SIZE; x++)
-	{
-		for (int z = 0; z < CHUNK_SIZE; z++)
-		{
-			int h =(int) m_heightNoiseGen.getHeight(x, z, location.x + 10, location.y + 10);
-			arr[x * CHUNK_SIZE + z] = h;
-		}
-	}
-	m_heightMap = std::move( arr);
+	constexpr static auto HALF_CHUNK = CHUNK_SIZE / 2;
+	constexpr static auto CHUNK = CHUNK_SIZE;
+	getHeightIn(0, 0, HALF_CHUNK, HALF_CHUNK);
+	getHeightIn(HALF_CHUNK, 0, CHUNK-1, HALF_CHUNK);
+	getHeightIn(0, HALF_CHUNK, HALF_CHUNK, CHUNK-1);
+	getHeightIn(HALF_CHUNK, HALF_CHUNK, CHUNK-1, CHUNK-1);
 }
 
 void TerrainGenerator::getBiomeMap()
 {
-	std::array<int, CHUNK_AREA> arr;
 	auto location = m_pChunk->getLocation();
-
 	for (int x = 0; x < CHUNK_SIZE; x++)
 		for (int z = 0; z < CHUNK_SIZE; z++)
 		{
 			int h =(int) m_biomeNoiseGen.getHeight(x, z, location.x + 10, location.y + 10);
-			arr[x * CHUNK_SIZE + z] = h;
+			m_biomeMap[x * CHUNK_SIZE + z] = h;
 		}
-	m_biomeMap =  std::move(arr);
 }
 
 void TerrainGenerator::setBlocks()
@@ -91,7 +102,7 @@ void TerrainGenerator::setBlocks()
 		for (int z = 0; z < CHUNK_SIZE; z++)
 		{
 			int h = m_heightMap[x * CHUNK_SIZE + z];
-			int biome = m_biomeMap[x * CHUNK_SIZE + z];
+			auto& biome = getBiome(x, z);
 
 			for (int y = 0; y <= WATER_LEVEL && y < h; y++)
 			{
@@ -107,27 +118,28 @@ void TerrainGenerator::setBlocks()
 			}
 			if (h >= WATER_LEVEL)
 			{
-				if (m_random.intInRange(0, 200) == 99) trees.emplace_back(x, h, z);
+				if (m_random.intInRange(0, biome.getTreeFrequency()) == 5) trees.emplace_back(x, h, z);
 				setTopBlock(x,h,z);
 			}
 			else m_pChunk->setBlock(x, h, z, m_random.intInRange(0,10)<5? BlockId::Dirt:BlockId::Sand);
 		}
 	for (auto& tree : trees)
 	{
-		makeOakTree(*m_pChunk, m_random, tree.x, tree.y, tree.z);
+		int x = tree.x;
+		int z = tree.z;
+		getBiome(x, z).makeTree(m_random, *m_pChunk, x, tree.y, z);
 	}
 }
 
 void TerrainGenerator::setTopBlock(int x, int y, int z)
 {
-	int biome = m_biomeMap[x * CHUNK_SIZE + z];
+	m_pChunk->setBlock(x, y, z, getBiome(x, z).getTopBlock(m_random));
+}
 
-	if (biome < 100)
-	{
-		m_pChunk->setBlock(x, y, z, BlockId::Grass);
-	}
-	else
-	{
-		m_pChunk->setBlock(x, y, z, BlockId::Sand);
-	}
+const IBiome& TerrainGenerator::getBiome(int x, int z) const
+{
+	int biomeValue = m_biomeMap[x * CHUNK_SIZE + z];
+	if (biomeValue > 155) return m_desertBiome;
+	if (biomeValue > 135) return m_lightForest;
+	return m_grassBiome;
 }
