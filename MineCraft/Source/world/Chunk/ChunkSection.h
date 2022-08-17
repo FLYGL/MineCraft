@@ -17,7 +17,7 @@ class ChunkSection : public IChunk
 	public:
 		void update(ChunkBlock c)
 		{
-			if (c == BlockId::Air)
+			if (c.getData().isOpaque)
 			{
 				m_solidBlockCount--;
 			}

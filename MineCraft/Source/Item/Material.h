@@ -13,11 +13,15 @@ struct Material : public NonCopyable
 		Dirt,
 		Stone,
 		OakBark,
-		OakLeaf
+		OakLeaf,
+		Sand,
+		Water,
+		Cactus,
 	};
 	
 	const static Material NOTHING, GRASS_BLOCK,
-		DIRT_BLOCK, STONE_BLOCK, OAK_BARK_BLOCK, OAK_LEAF_BLOCK;
+		DIRT_BLOCK, STONE_BLOCK, OAK_BARK_BLOCK, OAK_LEAF_BLOCK,
+		SAND_BLOCK,WATER_BLOCK,CACTUS_BLOCK;
 
 	Material(Material::ID id, int maxStack, bool isBlock, std::string&& name);
 	BlockId toBlockID() const;

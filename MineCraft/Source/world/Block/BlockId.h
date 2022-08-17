@@ -12,5 +12,8 @@ enum class BlockId : Block_t
 	Stone = 3,
 	OakBark = 4,
 	OakLeaf = 5,
+	Sand = 6,
+	Water = 7,
+	Cactus = 8,
 	NUM_TYPES
 };

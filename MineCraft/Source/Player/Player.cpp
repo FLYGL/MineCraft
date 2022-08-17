@@ -66,11 +66,12 @@ Player::Player() :
 	m_itemDown(sf::Keyboard::Down)
 {
 	f.loadFromFile("Res/Fonts/rs.ttf");
-	for (int i = 0; i < 5; i++)
+	int numbers = (int)BlockId::NUM_TYPES;
+	for (int i = 0; i < numbers; i++)
 	{
 		m_items.emplace_back(Material::NOTHING, 0);
 	}
-	for (float i = 0; i < 5; i++)
+	for (float i = 0; i < numbers; i++)
 	{
 		sf::Text t;
 		t.setFont(f);
@@ -219,7 +220,7 @@ void Player::mouseClick(World& world)
 				int z = (int)std::floor(end.z);
 
 				auto block = world.getBlock(x, y, z);
-				if (block != BlockId::Air)
+				if (block != BlockId::Air && block != BlockId::Water)
 				{
 					timer.restart();
 					world.addEvent<PlayerDigEvent>(sf::Mouse::Left, glm::vec3{ x,y,z }, *this);
@@ -237,7 +238,7 @@ void Player::mouseClick(World& world)
 				int z = (int)std::floor(end.z);
 
 				auto block = world.getBlock(x, y, z);
-				if (block != BlockId::Air)
+				if (block != BlockId::Air && block != BlockId::Water)
 				{
 					timer.restart();
 					glm::vec3 newBlockPosition = GetNewBlockPosition({ x,y,z }, end);

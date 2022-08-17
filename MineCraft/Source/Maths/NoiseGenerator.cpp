@@ -68,3 +68,8 @@ double NoiseGenerator::getHeight(int x, int z, int chunkX, int chunkZ)const
 		(((totalValue / 2.1) + 1.2) * m_noiseParameters.amplitude) + m_noiseParameters.heightOffset;
 	return val > 0 ? val : 1;
 }
+
+void NoiseGenerator::setParameters(const NoiseParamters& pararms)
+{
+	m_noiseParameters = pararms;
+}
