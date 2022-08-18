@@ -56,7 +56,7 @@ void TerrainGenerator::getHeightIn(int xMin, int zMin, int xMax, int zMax)
 {
 	auto getHeightAt = [&](int x, int z)
 	{
-		const IBiome& biome = getBiome(x, z);
+		const Biome& biome = getBiome(x, z);
 		return biome.getHeight(x, z, m_pChunk->getLocation().x, m_pChunk->getLocation().y);
 	};
 	int bottomLeft = getHeightAt(xMin, zMin);
@@ -70,7 +70,7 @@ void TerrainGenerator::getHeightIn(int xMin, int zMin, int xMax, int zMax)
 			if (z == CHUNK_SIZE) continue;
 			int h = (int)billinearInterpolation((float)bottomLeft, (float)topLeft, (float)bottomRight,
 				(float)topRight, (float)xMin, (float)xMax, (float)zMin, (float)zMax, (float)x, (float)z);
-			m_heightMap[x * CHUNK_SIZE + z] = h;
+			m_heightMap.get(x,z) = h;
 		}
 }
 
@@ -91,7 +91,7 @@ void TerrainGenerator::getBiomeMap()
 		for (int z = 0; z < CHUNK_SIZE+1; z++)
 		{
 			int h =(int) m_biomeNoiseGen.getHeight(x, z, location.x + 10, location.y + 10);
-			m_biomeMap[x * CHUNK_SIZE + z] = h;
+			m_biomeMap.get(x,z) = h;
 		}
 }
 
@@ -101,7 +101,7 @@ void TerrainGenerator::setBlocks()
 	for (int x = 0; x < CHUNK_SIZE; x++)
 		for (int z = 0; z < CHUNK_SIZE; z++)
 		{
-			int h = m_heightMap[x * CHUNK_SIZE + z];
+			int h = m_heightMap.get(x,z);
 			auto& biome = getBiome(x, z);
 
 			for (int y = 0; y <= WATER_LEVEL && y < h; y++)
@@ -136,9 +136,9 @@ void TerrainGenerator::setTopBlock(int x, int y, int z)
 	m_pChunk->setBlock(x, y, z, getBiome(x, z).getTopBlock(m_random));
 }
 
-const IBiome& TerrainGenerator::getBiome(int x, int z) const
+const Biome& TerrainGenerator::getBiome(int x, int z) const
 {
-	int biomeValue = m_biomeMap[x * (CHUNK_SIZE+1) + z];
+	int biomeValue = m_biomeMap.get(x,z);
 	if (biomeValue > 155) return m_desertBiome;
 	if (biomeValue > 135) return m_lightForest;
 	return m_grassBiome;

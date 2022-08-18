@@ -1,11 +1,12 @@
 #pragma once
 
-#include <array>
-
+#include "../../Util/Array2D.h"
 #include "../../Maths/NoiseGenerator.h"
 #include "../WorldConstants.h"
 #include "../../Util/Random.h"
-#include "Biome.h"
+#include "GrasslandBiome.h"
+#include "TemperateForestBiome.h"
+#include "DesertBiome.h"
 
 class Chunk;
 class TerrainGenerator
@@ -22,18 +23,18 @@ private:
 	void  getHeightMap();
 	void getBiomeMap();
 
-	const IBiome& getBiome(int x, int z) const;
+	const Biome& getBiome(int x, int z) const;
 
 	static void setUpNoise();
 	static NoiseGenerator m_heightNoiseGen;
 	static NoiseGenerator m_biomeNoiseGen;
 
 	Chunk* m_pChunk = nullptr;
-	std::array<int, CHUNK_AREA> m_heightMap;
-	std::array<int, (CHUNK_SIZE+1)*(CHUNK_SIZE+1)> m_biomeMap;
+	Array2D<int, CHUNK_SIZE> m_heightMap;
+	Array2D<int, CHUNK_SIZE+1> m_biomeMap;
 
 	GrasslandBiome m_grassBiome;
-	LightForestBiome m_lightForest;
+	TemperateForestBiome m_lightForest;
 	DesertBiome m_desertBiome;
 
 	Random<std::minstd_rand> m_random;
