@@ -13,7 +13,7 @@ BlockDatabase::BlockDatabase():textureAtlas("DefaultPack")
 	m_blocks[static_cast<int>(BlockId::Cactus)] = std::make_unique<DefaultBlock>("Cactus");
 }
 // TODO : 这种static 什么时候初始化
-BlockDatabase& BlockDatabase::get() 
+BlockDatabase& BlockDatabase::get()  noexcept
 {
 	static BlockDatabase d;
 	return d;

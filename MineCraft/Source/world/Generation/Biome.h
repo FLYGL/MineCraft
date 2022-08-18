@@ -10,11 +10,11 @@ class Chunk;
 struct Biome
 {
 public:
-	Biome(const NoiseParamters& parameters, int treeFreq, int seed);
+	Biome(const NoiseParamters& parameters, int treeFreq, int seed) noexcept;
 	virtual BlockId getTopBlock(Rand& rand) const = 0;
 	virtual void makeTree(Rand& rand, Chunk& chunk, int x, int y, int z) const = 0;
-	int getHeight(int x, int z, int chunkX, int chunkZ) const;
-	int getTreeFrequency() const;
+	int getHeight(int x, int z, int chunkX, int chunkZ) const noexcept;
+	int getTreeFrequency() const noexcept;
 protected:
 	virtual NoiseParamters getNoiseParameters() = 0;
 private:

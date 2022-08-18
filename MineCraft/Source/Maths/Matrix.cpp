@@ -4,7 +4,7 @@
 #include "../Entity.h"
 
 //TODO 关于模型空间旋转问题。
-glm::mat4 makeModelMatrix(const Entity& entity)
+glm::mat4 makeModelMatrix(const Entity& entity) noexcept
 {
 	glm::mat4 matrix(1.0f);
 	matrix = glm::translate(matrix, entity.position);
@@ -17,7 +17,7 @@ glm::mat4 makeModelMatrix(const Entity& entity)
 
 
 
-glm::mat4 makeViewMatrix(const Camera& camera)
+glm::mat4 makeViewMatrix(const Camera& camera) noexcept
 {
 	glm::mat4 tMatrix(1.0f);
 	tMatrix = glm::translate(tMatrix, -camera.position);
@@ -29,7 +29,7 @@ glm::mat4 makeViewMatrix(const Camera& camera)
 	return glm::transpose(rYMatrix)* glm::transpose(rXmatrix) * tMatrix;
 }
 
-glm::mat4 makeProjectionMatrix(float fov)
+glm::mat4 makeProjectionMatrix(float fov) noexcept
 {
 	return glm::perspective(glm::radians(fov), 1280.f / 720.f, 0.1f, 1000.0f);
 }

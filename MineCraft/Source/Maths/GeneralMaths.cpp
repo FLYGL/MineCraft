@@ -2,7 +2,7 @@
 float billinearInterpolation(float bottomLeft, float topLeft, float bottomRight, float topRight,
 	float xMin, float xMax,
 	float zMin, float zMax,
-	float x, float z)
+	float x, float z) noexcept
 {
 	float width = xMax - xMin;
 	float height = zMax - zMin;

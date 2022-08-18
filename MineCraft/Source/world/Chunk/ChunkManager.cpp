@@ -22,7 +22,7 @@ Chunk& ChunkManager::getChunk(int x, int z)
 		Chunk chunk{ *m_world, {x, z} };
 		m_chunks.emplace(key, std::move(chunk));
 	}
-	return m_chunks.at(key);
+	return m_chunks[key];
 }
 
 bool ChunkManager::makeMesh(int x, int z)

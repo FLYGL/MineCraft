@@ -5,10 +5,10 @@
 class DesertBiome : public Biome
 {
 public:
-	DesertBiome(int seed);
-	BlockId getTopBlock(Rand& rand)const;
+	DesertBiome(int seed) noexcept;
+	BlockId getTopBlock(Rand& rand)const noexcept;
 	void makeTree(Rand& rand, Chunk& chunk, int x, int y, int z)const;
 
 private:
-	NoiseParamters getNoiseParameters();
+	NoiseParamters getNoiseParameters() noexcept;
 };

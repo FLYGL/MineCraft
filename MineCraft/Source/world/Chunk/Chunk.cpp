@@ -60,7 +60,7 @@ void Chunk::drawChunks(RenderMaster& renderer,const Camera& camera)
 	}
 }
 
-bool Chunk::hashLoaded()const
+bool Chunk::hashLoaded()const noexcept
 {
 	return m_isLoaded;
 }

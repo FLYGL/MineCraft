@@ -1,13 +1,13 @@
 #include "TemperateForestBiome.h"
 #include "TreeGenerator.h"
 
-TemperateForestBiome::TemperateForestBiome(int seed) :
+TemperateForestBiome::TemperateForestBiome(int seed) noexcept :
 	Biome(getNoiseParameters(), 55, seed)
 {
 
 }
 
-BlockId TemperateForestBiome::getTopBlock(Rand& rand) const
+BlockId TemperateForestBiome::getTopBlock(Rand& rand) const noexcept
 {
 	return rand.intInRange(0,10) < 8 ? BlockId::Grass : BlockId::Dirt;
 }
@@ -17,7 +17,7 @@ void TemperateForestBiome::makeTree(Rand& rand, Chunk& chunk, int x, int y, int 
 	makeOakTree(chunk, rand, x, y, z);
 }
 
-NoiseParamters TemperateForestBiome::getNoiseParameters()
+NoiseParamters TemperateForestBiome::getNoiseParameters() noexcept
 {
     NoiseParamters heightParams;
     heightParams.octaves = 9;

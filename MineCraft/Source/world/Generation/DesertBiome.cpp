@@ -5,13 +5,13 @@
 /**
     DESERT
 */
-DesertBiome::DesertBiome(int seed)
+DesertBiome::DesertBiome(int seed) noexcept
     : Biome(getNoiseParameters(),175,seed)
 {
 
 }
 
-BlockId DesertBiome::getTopBlock(Rand& rand)const
+BlockId DesertBiome::getTopBlock(Rand& rand)const noexcept
 {
     return BlockId::Sand;
 }
@@ -20,8 +20,8 @@ void DesertBiome::makeTree(Rand& rand, Chunk& chunk, int x, int y, int z)const
 {
     makeCactus(chunk, rand, x, y, z);
 }
-
-NoiseParamters DesertBiome::getNoiseParameters()
+ 
+NoiseParamters DesertBiome::getNoiseParameters() noexcept
 {
     NoiseParamters heightParams;
     heightParams.octaves = 9;

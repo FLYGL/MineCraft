@@ -4,9 +4,9 @@
 class TemperateForestBiome : public Biome
 {
 public:
-	TemperateForestBiome(int seed);
-	BlockId getTopBlock(Rand& rand) const;
+	TemperateForestBiome(int seed) noexcept;
+	BlockId getTopBlock(Rand& rand) const noexcept;
 	void makeTree(Rand& rand, Chunk& chunk, int x, int y, int z)const;
 private:
-	NoiseParamters getNoiseParameters() override;
+	NoiseParamters getNoiseParameters() noexcept override;
 };

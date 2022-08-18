@@ -12,12 +12,12 @@ enum Planes
 	Bottom
 };
 
-float Plane::distanceToPoint(const glm::vec3& point) const
+float Plane::distanceToPoint(const glm::vec3& point) const noexcept
 {
 	return glm::dot(point, normal) + distanceToOrigin;
 }
 
-void ViewFrustum::update(Camera& camera)
+void ViewFrustum::update(Camera& camera) noexcept
 {
 	glm::mat4 mat = camera.getProjectionViewMatrix();
 	//left

@@ -10,7 +10,7 @@
 class BlockDatabase : public Singleton
 {
 public:
-	static BlockDatabase& get();
+	static BlockDatabase& get() noexcept;
 	const BlockType& getBlock(BlockId id)const;
 	const BlockData& getData(BlockId id)const;
 
