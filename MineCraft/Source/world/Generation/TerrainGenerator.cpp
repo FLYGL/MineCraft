@@ -137,8 +137,9 @@ void TerrainGenerator::setTopBlock(int x, int y, int z)
 const Biome& TerrainGenerator::getBiome(int x, int z) const
 {
 	int biomeValue = m_biomeMap.get(x,z);
-	if (biomeValue > 155) return m_desertBiome;
-	if (biomeValue > 135) return m_lightForest;
-	if (biomeValue > 100) return m_grassBiome;
-	return m_oceanBiome;
+	if (biomeValue > 155) return m_oceanBiome;
+	if (biomeValue > 145) return m_grassBiome;
+	if (biomeValue > 110) return m_lightForest;
+	if (biomeValue > 90) return m_grassBiome;
+	return m_desertBiome;
 }

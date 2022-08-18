@@ -10,7 +10,7 @@ namespace
 	constexpr float GRAV = -3;
 }
 
-World::World():m_chunkManager(*this)
+World::World(const Camera& camera):m_chunkManager(*this)
 {
 	
 }

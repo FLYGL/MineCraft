@@ -14,7 +14,7 @@ class Entity;
 class World
 {
 public:
-	World();
+	World(const Camera& camera);
 	ChunkBlock getBlock(int x, int y, int z) ;
 	bool setBlock(int x, int y, int z, ChunkBlock block);
 	void update(const Camera& camera);

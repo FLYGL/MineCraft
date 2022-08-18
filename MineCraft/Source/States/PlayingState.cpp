@@ -2,7 +2,7 @@
 #include "../Application.h"
 #include "../Renderer/RenderMaster.h"
 
-StatePlaying::StatePlaying(Application& app):StateBase(app)
+StatePlaying::StatePlaying(Application& app):StateBase(app),m_world(app.getCamera())
 {
 	app.getCamera().hookEntity(m_player);
 	m_chTexture.loadFromFile("Res/Textures/ch.png");
