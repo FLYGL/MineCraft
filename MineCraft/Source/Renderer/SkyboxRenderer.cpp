@@ -68,8 +68,11 @@ SkyboxRenderer::SkyboxRenderer()
     m_skyCube.genVAO();
     m_skyCube.addVBO(3, vertexCoords);
     m_skyCube.addEBO(indices);
+    //m_cubeTexture.loadFromFiles({
+    //    "right","left","top","bottom","back","front"
+    //    });
     m_cubeTexture.loadFromFiles({
-        "right","left","top","bottom","back","front"
+    "dm","dm","dt","db","dm","dm"
         });
 }
 

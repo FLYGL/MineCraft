@@ -7,7 +7,7 @@
 #include "GrasslandBiome.h"
 #include "TemperateForestBiome.h"
 #include "DesertBiome.h"
-
+#include "OceanBiome.h"
 class Chunk;
 class TerrainGenerator
 {
@@ -36,6 +36,7 @@ private:
 	GrasslandBiome m_grassBiome;
 	TemperateForestBiome m_lightForest;
 	DesertBiome m_desertBiome;
+	OceanBiome m_oceanBiome;
 
 	Random<std::minstd_rand> m_random;
 };

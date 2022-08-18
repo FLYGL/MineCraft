@@ -18,7 +18,8 @@ NoiseGenerator TerrainGenerator::m_biomeNoiseGen(seed * 2);
 TerrainGenerator::TerrainGenerator() :
 	m_grassBiome(seed),
 	m_lightForest(seed),
-	m_desertBiome(seed)
+	m_desertBiome(seed),
+	m_oceanBiome(seed)
 {
 	setUpNoise();
 }
@@ -28,16 +29,13 @@ void TerrainGenerator::setUpNoise()
 	static bool noiseGen = false;
 	if (!noiseGen)
 	{
-		std::cout << "make noise\n";
 		noiseGen = true;
-
 		NoiseParamters biomePararms;
 		biomePararms.octaves = 5;
 		biomePararms.amplitude = 125;
-		biomePararms.smoothness = 735;
-		biomePararms.heightOffset = -5;
-		biomePararms.roughness = 0.6;
-
+		biomePararms.smoothness = 1035;
+		biomePararms.heightOffset = 0;
+		biomePararms.roughness = 0.7;
 		m_biomeNoiseGen.setParameters(biomePararms);
 	}
 }
@@ -141,5 +139,6 @@ const Biome& TerrainGenerator::getBiome(int x, int z) const
 	int biomeValue = m_biomeMap.get(x,z);
 	if (biomeValue > 155) return m_desertBiome;
 	if (biomeValue > 135) return m_lightForest;
-	return m_grassBiome;
+	if (biomeValue > 100) return m_grassBiome;
+	return m_oceanBiome;
 }
