@@ -2,18 +2,32 @@
 #include "../Renderer/RenderMaster.h"
 #include "../Maths/Vector2XZ.h"
 #include "../Camera.h"
-
+#include <iostream>
 namespace
 {
 	constexpr int renderDistance =12;
 	// what means
 	constexpr float GRAV = -3;
+	//std::mutex m_chuMutex;
 }
 
 World::World(const Camera& camera):m_chunkManager(*this)
+//,m_thread([&] {
+//	while (m_running)
+//	{
+//		std::cout << "Task Running" << std::endl;
+//		loadChunks(camera);
+//	}
+//		})
 {
 	
 }
+//
+//World::~World()
+//{
+//	m_running = false;
+//	m_thread.join();
+//}
 
 bool World::setBlock(int x, int y, int z, ChunkBlock block)
 {
@@ -39,22 +53,33 @@ void World::update(const Camera& camera)
 	}
 	m_events.clear();
 	updateChunks();
+	loadChunks(camera);
+}
 
+void World::loadChunks(const Camera& camera)
+{
 	bool isMeshMade = false;
 	VectorXZ cp = getChunkXZ(camera.position.x, camera.position.z);
-
-	for (int x = cp.x - m_loadDistance; x < cp.x + m_loadDistance; x++)
+	for (int i = 0; i < m_loadDistance; i++)
 	{
-		for (int z = cp.z - m_loadDistance; z < cp.z + m_loadDistance; z++)
+		for (int x = cp.x - i; x < cp.x + i; x++)
 		{
-			if (m_chunkManager.makeMesh(x, z))
+			for (int z = cp.z - i; z < cp.z + i; z++)
 			{
-				isMeshMade = true;
-				break;
+				//m_chuMutex.lock();
+				if (m_chunkManager.makeMesh(x, z))
+				{
+					isMeshMade = true;
+					//m_chuMutex.unlock();
+					break;
+				}
+				//m_chuMutex.unlock();
 			}
+			if (isMeshMade) break;
 		}
 		if (isMeshMade) break;
 	}
+
 	if (!isMeshMade)
 	{
 		m_loadDistance++;
@@ -71,6 +96,7 @@ void World::update(const Camera& camera)
 
 void World::renderWorld(RenderMaster& renderer,const Camera& camera)
 {
+	//m_chuMutex.lock();
 	auto& chunkMap = m_chunkManager.getChunks();
 	for (int x = minRenderPosition.x; x < maxRenderPosition.x; x++)
 	{
@@ -80,6 +106,7 @@ void World::renderWorld(RenderMaster& renderer,const Camera& camera)
 			chunk.drawChunks(renderer,camera);
 		}
 	}
+	//m_chuMutex.unlock();
 }
 
 void World::updateChunk(int blockX, int blockY, int blockZ)

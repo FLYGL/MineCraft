@@ -17,6 +17,7 @@ Context::Context()
 	glewExperimental = GL_TRUE;
 	glViewport(0, 0, 1280, 720);
 	glCullFace(GL_BACK);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glFrontFace(GL_CCW);
 	//window.setFramerateLimit(144);
 	//window.setVerticalSyncEnabled(true);

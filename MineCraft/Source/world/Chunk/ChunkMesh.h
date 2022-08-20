@@ -7,7 +7,7 @@
 class ChunkMesh
 {
 public:
-	ChunkMesh();
+	ChunkMesh() = default;
 	void addFace(const std::vector<GLfloat>& blockFace,
 		const std::vector<GLfloat>& textureCoords,
 		const sf::Vector3i& chunkPosition,
@@ -22,4 +22,10 @@ private:
 	Model m_model;
 	GLuint m_indexIndex = 0;
 	std::vector<GLfloat> m_light;
+};
+
+struct  ChunkMeshCollection
+{
+	ChunkMesh solidMesh;
+	ChunkMesh waterMesh;
 };

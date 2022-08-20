@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "../Debug/Debug.h"
+#include "../world//Chunk/ChunkSection.h"
 
 void RenderMaster::drawSFML(const sf::Drawable& drawable)
 {
@@ -17,11 +18,15 @@ void RenderMaster::drawCube(const Entity& cube)
 	m_cubeRenderer.add(cube);
 }
 
-void RenderMaster::drawChunk(const ChunkMesh& mesh)
+void RenderMaster::drawChunk(const ChunkSection& chunk)
 {
-	if (mesh.faces > 0)
+	const ChunkMesh& solidMesh = chunk.getMeshes().solidMesh;
+	const ChunkMesh& waterMesh = chunk.getMeshes().waterMesh;
+
+	if (solidMesh.faces > 0) m_chunkRenderer.add(solidMesh);
+	if (waterMesh.faces > 0)
 	{
-		m_chunkRenderer.add(mesh);
+		m_waterRenderer.add(waterMesh);
 	}
 }
 
@@ -36,6 +41,7 @@ void RenderMaster::finishRender(sf::RenderWindow& window, const Camera& camera)
 	m_chunkRenderer.render(camera);
 	m_skyboxRenderer.render(camera);
 	m_sfmlRenderer.render(window);
+	m_waterRenderer.render(camera);
 	window.display();
 	//std::cout << std::endl << std::endl;
 	//std::cout << "One Frame ComparePlanesTimes: " << Debug::comparePlaneTimes << std::endl;       

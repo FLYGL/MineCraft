@@ -3,19 +3,21 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include <GL/glew.h>
+#include "../Block/ChunkBlock.h"
 #include "../Block/BlockData.h"
 #include "ChunkMesh.h"
 #include "ChunkSection.h"
+
 
 class ChunkMeshBuilder
 {
 public:
 
-    ChunkMeshBuilder(ChunkSection& chunk,ChunkMesh& mesh);
+    ChunkMeshBuilder(ChunkSection& chunk,ChunkMeshCollection& meshes);
     void buildMesh();
 
 private:
-
+    void setActiveMesh(ChunkBlock block);
     void tryAddFaceToMesh(const std::vector<GLfloat>& blockFace,
         const sf::Vector2i& textureCoords,
         const sf::Vector3i& blockPosition,
@@ -25,7 +27,8 @@ private:
         const BlockDataHolder& blockData);
     bool shouldMakeLayer(int y);
 
-    ChunkMesh* m_pMesh = nullptr;
+    ChunkMeshCollection* m_pMeshes = nullptr;
+    ChunkMesh* m_pActiveMesh = nullptr;
     ChunkSection* m_pChunk  = nullptr;
     const BlockDataHolder* m_pBlockData = nullptr;
 };

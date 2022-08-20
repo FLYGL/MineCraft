@@ -41,10 +41,14 @@ public:
 	bool hashBuffered() const noexcept;
 	void makeMesh();
 	void bufferMesh();
-	const ChunkMesh& getMesh() const;
 
 	const Layer& getLayer(int y) const;
 	ChunkSection& getAdjacent(int dx, int dz);
+
+	const ChunkMeshCollection& getMeshes() const
+	{
+		return m_meshes;
+	}
 
 private:
 	static bool outOfBounds(int value);
@@ -55,7 +59,7 @@ private:
 	std::array<ChunkBlock, CHUNK_VOLUME> m_blocks;
 	sf::Vector3i m_location;
 	World* m_pWorld;
-	ChunkMesh m_mesh;
+	ChunkMeshCollection m_meshes;
 	AABB m_aabb;
 	bool m_hasMesh = false;
 	bool m_hasBufferedMesh = false;

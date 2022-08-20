@@ -1,9 +1,9 @@
 #include "ChunkMesh.h"
 #include "../WorldConstants.h"
-ChunkMesh::ChunkMesh()
-{
-
-}
+//ChunkMesh::ChunkMesh()
+//{
+//
+//}
 void ChunkMesh::addFace(const std::vector<GLfloat>& blockFace,
 	const std::vector<GLfloat>& textureCoords,
 	const sf::Vector3i& chunkPosition,

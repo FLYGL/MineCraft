@@ -60,8 +60,8 @@ namespace
 }
 
 
-ChunkMeshBuilder::ChunkMeshBuilder(ChunkSection& chunk, ChunkMesh& mesh) :
-    m_pChunk(&chunk), m_pMesh(&mesh)
+ChunkMeshBuilder::ChunkMeshBuilder(ChunkSection& chunk, ChunkMeshCollection& meshes) :
+    m_pChunk(&chunk), m_pMeshes(&meshes)
 {
 }
 
@@ -99,6 +99,7 @@ void ChunkMeshBuilder::buildMesh()
             {
                 sf::Vector3i position(x, y, z);
                 ChunkBlock block = m_pChunk->getBlock(x, y, z);
+                setActiveMesh(block);
                 if (block == BlockId::Air)
                 {
                     continue;
@@ -130,7 +131,7 @@ void ChunkMeshBuilder::tryAddFaceToMesh(const std::vector<GLfloat>& blockFace,
     {
         faces++;
         auto texCoords = BlockDatabase::get().textureAtlas.getTexture(textureCoords);
-        m_pMesh->addFace(blockFace, texCoords, m_pChunk->getLocation(), blockPosition,cardinalLight);
+        m_pActiveMesh->addFace(blockFace, texCoords, m_pChunk->getLocation(), blockPosition,cardinalLight);
     }
 }
 
@@ -161,4 +162,16 @@ bool ChunkMeshBuilder::shouldMakeLayer(int y)
         (!m_pChunk->getLayer(y + 1).isAllSolid()) ||
         (!m_pChunk->getLayer(y - 1).isAllSolid()) ||
         (!adjIsSolid(1, 0)) || (!adjIsSolid(0, 1)) || (!adjIsSolid(-1, 0)) || (!adjIsSolid(0, -1));
+}
+
+void ChunkMeshBuilder::setActiveMesh(ChunkBlock block)
+{
+    if (block.id == (int)BlockId::Water)
+    {
+        m_pActiveMesh = &m_pMeshes->waterMesh;
+    }
+    else
+    {
+        m_pActiveMesh = &m_pMeshes->solidMesh;
+    }
 }

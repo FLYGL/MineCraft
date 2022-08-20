@@ -25,14 +25,15 @@ bool ChunkSection::setBlock(int x, int y, int z, ChunkBlock block)
 
 void ChunkSection::makeMesh()
 {
-	ChunkMeshBuilder(*this, m_mesh).buildMesh();
+	ChunkMeshBuilder(*this, m_meshes).buildMesh();
 	m_hasBufferedMesh = false;
 	m_hasMesh = true;
 }
 
 void ChunkSection::bufferMesh()
 {
-	m_mesh.bufferMesh();
+	m_meshes.solidMesh.bufferMesh();
+	m_meshes.waterMesh.bufferMesh();
 	m_hasBufferedMesh = true;
 }
 
@@ -77,12 +78,6 @@ bool ChunkSection::hashBuffered() const noexcept
 {
 	return m_hasBufferedMesh;
 }
-
-const ChunkMesh& ChunkSection::getMesh() const 
-{
-	return m_mesh;
-}
-
 
 const ChunkSection::Layer& ChunkSection::getLayer(int y) const
 {

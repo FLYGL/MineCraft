@@ -2,6 +2,9 @@
 
 #include <vector>
 #include <memory>
+#include <thread>
+#include <mutex>
+#include <atomic>
 
 #include "Chunk/Chunk.h"
 #include "Chunk/ChunkManager.h"
@@ -15,6 +18,7 @@ class World
 {
 public:
 	World(const Camera& camera);
+	//~World();
 	ChunkBlock getBlock(int x, int y, int z) ;
 	bool setBlock(int x, int y, int z, ChunkBlock block);
 	void update(const Camera& camera);
@@ -32,9 +36,13 @@ public:
 	void collisionTest(Entity& entity);
 private:
 	void updateChunks();
+	void loadChunks(const Camera& camera);
 	std::vector<std::unique_ptr<IWorldEvent>> m_events;
 	std::unordered_map<sf::Vector3i, ChunkSection*> m_chunkUpdates;
 	ChunkManager m_chunkManager;
+
+	//std::atomic<bool> m_running{ true };
+	//std::thread m_thread;
 
 	int m_loadDistance = 2;
 	VectorXZ minRenderPosition;
