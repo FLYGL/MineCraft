@@ -102,11 +102,11 @@ void TerrainGenerator::setBlocks()
 			int h = m_heightMap.get(x,z);
 			auto& biome = getBiome(x, z);
 
-			for (int y = 0; y <= WATER_LEVEL && y < h; y++)
+			for (int y = 0; y < WATER_LEVEL; y++)
 			{
 				m_pChunk->setBlock(x, y, z, BlockId::Water);
 			}
-			for (int y = WATER_LEVEL+1; y < h - 3; y++)
+			for (int y = WATER_LEVEL; y < h - 3; y++)
 			{
 				m_pChunk->setBlock(x, y, z, BlockId::Stone);
 			}
@@ -114,12 +114,19 @@ void TerrainGenerator::setBlocks()
 			{
 				m_pChunk->setBlock(x, y, z, BlockId::Dirt);
 			}
-			if (h >= WATER_LEVEL)
+			if (h > WATER_LEVEL)
 			{
-				if (m_random.intInRange(0, biome.getTreeFrequency()) == 5) trees.emplace_back(x, h, z);
-				setTopBlock(x,h,z);
+				if (h < WATER_LEVEL + 5)
+				{
+					m_pChunk->setBlock(x, h, z, BlockId::Sand);
+				}
+				else
+				{
+					if (m_random.intInRange(0, biome.getTreeFrequency()) == 5) trees.emplace_back(x, h, z);
+					setTopBlock(x, h, z);
+				}
 			}
-			else m_pChunk->setBlock(x, h, z, m_random.intInRange(0,10)<5? BlockId::Dirt:BlockId::Sand);
+			//else m_pChunk->setBlock(x, h, z, m_random.intInRange(0,10)<5? BlockId::Dirt:BlockId::Sand);
 		}
 	for (auto& tree : trees)
 	{
