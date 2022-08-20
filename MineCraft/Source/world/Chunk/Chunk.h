@@ -13,7 +13,7 @@ public:
 	Chunk() = default;
 	Chunk(World& world,const sf::Vector2i& location);
 	bool setBlock(int x, int y, int z, ChunkBlock block) override;
-	ChunkBlock getBlock(int x, int y, int z) const override;
+	ChunkBlock getBlock(int x, int y, int z) const noexcept override;
 	void drawChunks(RenderMaster& renderer,const Camera& camera);
 	bool makeMesh();
 	bool hashLoaded() const noexcept;

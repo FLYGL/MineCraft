@@ -35,7 +35,7 @@ bool Chunk::setBlock(int x, int y, int z, ChunkBlock block)
 
 	return m_chunks[y / CHUNK_SIZE].setBlock(x, bY, z, block);
 }
-ChunkBlock Chunk::getBlock(int x, int y, int z) const
+ChunkBlock Chunk::getBlock(int x, int y, int z) const noexcept
 {
 	if (outOfBound(x, y, z)) return BlockId::Air;
 	int bY = y % CHUNK_SIZE;

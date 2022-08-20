@@ -9,7 +9,9 @@ const Material Material::OAK_LEAF_BLOCK(ID::OakLeaf, 99, true, "Oak Leaf Block")
 const Material Material::SAND_BLOCK(ID::Sand, 99, true, "Sand Block");
 const Material Material::WATER_BLOCK(ID::Water, 99, true, "Water Block");
 const Material Material::CACTUS_BLOCK(ID::Cactus, 99, true, "Cactus Block");
-
+const Material Material::ROSE(ID::Rose, 99, true, "Rose");
+const Material Material::TALL_GRASS(ID::TallGrass, 99, true, "Tall Grass");
+const Material Material::DEAD_SHRUB(ID::DeadShrub, 99, true, "Dead Shrub");
 Material::Material(ID id, int maxStack, bool isBlock, std::string&& name):
 	id(id),maxStackSize(maxStack),isBlock(isBlock),name(name)
 {
@@ -22,19 +24,14 @@ BlockId Material::toBlockID() const
     {
     case Nothing:
         return BlockId::Air;
-
     case Grass:
         return BlockId::Grass;
-
     case Dirt:
         return BlockId::Dirt;
-
     case Stone:
         return BlockId::Stone;
-
     case OakBark:
         return BlockId::OakBark;
-
     case OakLeaf:
         return BlockId::OakLeaf;
     case Sand:
@@ -43,6 +40,12 @@ BlockId Material::toBlockID() const
 		return BlockId::Water;
 	case Cactus:
 		return BlockId::Cactus;
+	case Rose:
+		return BlockId::Rose;
+	case TallGrass:
+		return BlockId::TallGrass;
+	case DeadShrub:
+		return BlockId::DeadShrub;
     default:
         return BlockId::NUM_TYPES;
     }
@@ -70,6 +73,12 @@ const Material& Material::toMaterial(BlockId id)
 		return WATER_BLOCK;
 	case BlockId::Cactus:
 		return CACTUS_BLOCK;
+	case BlockId::Rose:
+		return ROSE;
+	case BlockId::TallGrass:
+		return TALL_GRASS;
+	case BlockId::DeadShrub:
+		return DEAD_SHRUB;
 	}
 	return NOTHING;
 }
