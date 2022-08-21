@@ -2,11 +2,16 @@
 #include "TreeGenerator.h"
 
 GrasslandBiome::GrasslandBiome(int seed)noexcept :
-	Biome(getNoiseParameters(), 100, seed)
+	Biome(getNoiseParameters(), 100,50, seed)
 {
 
 }
-
+BlockId GrasslandBiome::getPlant(Rand& rand) const noexcept
+{
+    return rand.intInRange(0, 10) > 6 ?
+        BlockId::Rose :
+        BlockId::TallGrass;
+}
 BlockId GrasslandBiome::getTopBlock(Rand& rand)const noexcept
 {
 	return BlockId::Grass;

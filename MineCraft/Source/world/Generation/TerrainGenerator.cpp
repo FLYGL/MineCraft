@@ -96,6 +96,7 @@ void TerrainGenerator::getBiomeMap()
 void TerrainGenerator::setBlocks()
 {
 	std::vector<sf::Vector3i> trees;
+	std::vector<sf::Vector3i> plants;
 	for (int x = 0; x < CHUNK_SIZE; x++)
 		for (int z = 0; z < CHUNK_SIZE; z++)
 		{
@@ -110,7 +111,7 @@ void TerrainGenerator::setBlocks()
 			{
 				m_pChunk->setBlock(x, y, z, BlockId::Stone);
 			}
-			for (int y = h - 3; y < h && y > 0; y++)
+			for (int y = h - 3; y <= h && y > 0; y++)
 			{
 				m_pChunk->setBlock(x, y, z, BlockId::Dirt);
 			}
@@ -122,7 +123,8 @@ void TerrainGenerator::setBlocks()
 				}
 				else
 				{
-					if (m_random.intInRange(0, biome.getTreeFrequency()) == 5) trees.emplace_back(x, h, z);
+					if (m_random.intInRange(0, biome.getTreeFrequency()) == 5) trees.emplace_back(x, h+1, z);
+					if (m_random.intInRange(0, biome.getPlantFrequency()) == 5) plants.emplace_back(x, h+1, z);
 					setTopBlock(x, h, z);
 				}
 			}
@@ -133,6 +135,14 @@ void TerrainGenerator::setBlocks()
 		int x = tree.x;
 		int z = tree.z;
 		getBiome(x, z).makeTree(m_random, *m_pChunk, x, tree.y, z);
+	}
+	for (auto& plant : plants)
+	{
+		int x = plant.x;
+		int z = plant.z;
+
+		auto block = getBiome(x, z).getPlant(m_random);
+		m_pChunk->setBlock(x, plant.y, z, block);
 	}
 }
 

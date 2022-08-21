@@ -4,6 +4,12 @@
 #include "../../Util/NonCopyable.h"
 #include "BlockId.h"
 
+enum class BlockMeshType
+{
+	Cube = 0,
+	X = 1,
+};
+
 struct BlockDataHolder :  public NonCopyable
 {
 	BlockId id;
@@ -11,6 +17,7 @@ struct BlockDataHolder :  public NonCopyable
 	sf::Vector2i texSideCoord;
 	sf::Vector2i texBottomCoord;
 	bool isOpaque;
+	BlockMeshType meshType;
 };
 
 class BlockData : public NonCopyable

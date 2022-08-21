@@ -12,7 +12,8 @@ void ChunkRenderer::render(const Camera& camera)
 {
 	if (m_chunks.empty())return;
 	glDisable(GL_BLEND);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
+	glDisable(GL_CULL_FACE);
 	m_shader.useProgram();
 	BlockDatabase::get().textureAtlas.bindTexture();
 	m_shader.loadProjectionViewMatrix(camera.getProjectionViewMatrix());

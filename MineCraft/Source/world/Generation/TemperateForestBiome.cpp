@@ -2,11 +2,14 @@
 #include "TreeGenerator.h"
 
 TemperateForestBiome::TemperateForestBiome(int seed) noexcept :
-	Biome(getNoiseParameters(), 55, seed)
+	Biome(getNoiseParameters(), 55,75, seed)
 {
 
 }
-
+BlockId TemperateForestBiome::getPlant(Rand& rand) const noexcept
+{
+    return BlockId::TallGrass;
+}
 BlockId TemperateForestBiome::getTopBlock(Rand& rand) const noexcept
 {
 	return rand.intInRange(0,10) < 8 ? BlockId::Grass : BlockId::Dirt;

@@ -1,5 +1,5 @@
 #include "BasicTexture.h"
-
+#include <iostream>
 
 BasicTexture::BasicTexture(const std::string& file)
 {
@@ -9,7 +9,6 @@ BasicTexture::BasicTexture(const std::string& file)
 void BasicTexture::loadFromImage(const sf::Image& i)
 {
 	glGenTextures(1, &m_id);
-	//TODO glActiveTexture是什么意思
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_id);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, i.getSize().x, i.getSize().y,

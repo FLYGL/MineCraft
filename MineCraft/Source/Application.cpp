@@ -1,8 +1,10 @@
 #include "Application.h"
 #include "States/PlayingState.h"
+#include "world/Block/BlockDatabase.h"
 
 Application::Application(const char* name)
 {
+	BlockDatabase::get();
 	pushState<StatePlaying>(*this);
 }
 

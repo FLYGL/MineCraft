@@ -9,16 +9,16 @@
 #include "Chunk/Chunk.h"
 #include "Chunk/ChunkManager.h"
 #include "Event/IWorldEvent.h"
-
+#include "../Util/NonCopyable.h"
 class RenderMaster;
 class Camera;
 class Entity;
 
-class World
+class World:NonCopyable
 {
 public:
 	World(const Camera& camera);
-	//~World();
+	~World();
 	ChunkBlock getBlock(int x, int y, int z) ;
 	bool setBlock(int x, int y, int z, ChunkBlock block);
 	void update(const Camera& camera);
@@ -41,8 +41,9 @@ private:
 	std::unordered_map<sf::Vector3i, ChunkSection*> m_chunkUpdates;
 	ChunkManager m_chunkManager;
 
-	//std::atomic<bool> m_running{ true };
-	//std::thread m_thread;
+	std::atomic<bool> m_running{ true };
+	std::thread m_chunkLoadThread;
+	std::mutex m_mutex;
 
 	int m_loadDistance = 2;
 	VectorXZ minRenderPosition;

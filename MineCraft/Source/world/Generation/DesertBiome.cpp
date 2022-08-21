@@ -6,11 +6,14 @@
     DESERT
 */
 DesertBiome::DesertBiome(int seed) noexcept
-    : Biome(getNoiseParameters(),175,seed)
+    : Biome(getNoiseParameters(),175,150,seed)
 {
 
 }
-
+BlockId DesertBiome::getPlant(Rand& rand) const noexcept
+{
+    return BlockId::DeadShrub;
+}
 BlockId DesertBiome::getTopBlock(Rand& rand)const noexcept
 {
     return BlockId::Sand;

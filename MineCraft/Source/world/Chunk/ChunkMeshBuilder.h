@@ -23,6 +23,8 @@ private:
         const sf::Vector3i& blockPosition,
         const sf::Vector3i& blockFacing,
         GLfloat cardinalLight);
+    void addXBlockToMesh(const sf::Vector2i& textureCoords,
+        const sf::Vector3i& blockPosition);
     bool shouldMakeFace(const sf::Vector3i& blockPosition,
         const BlockDataHolder& blockData);
     bool shouldMakeLayer(int y);

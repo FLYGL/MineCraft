@@ -97,7 +97,7 @@ void Player::update(float dt,World& world)
 	}
 	m_isOnGround = false;
 	box.update(position);
-	velocity.y *= 0.95f;
+	//velocity.y *= 0.95f;
 	velocity.x *= 0.95f;
 	velocity.z *= 0.95f;
 
@@ -109,6 +109,7 @@ void Player::update(float dt,World& world)
 
 	position.y += velocity.y * dt;
 	collide(world, { 0,velocity.y,0 }, dt);
+
 }
 void Player::collide(World& world, const glm::vec3& vel, float dt)
 {

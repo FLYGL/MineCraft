@@ -1,9 +1,16 @@
 #include "OceanBiome.h"
 #include "TreeGenerator.h"
 
-OceanBiome::OceanBiome(int seed) :Biome(getNoiseParameters(), 50, seed)
+OceanBiome::OceanBiome(int seed) :Biome(getNoiseParameters(), 50, 100 ,seed)
 {
 
+}
+
+BlockId OceanBiome::getPlant(Rand& rand) const noexcept
+{
+    return rand.intInRange(0, 10) > 6 ?
+        BlockId::Rose :
+        BlockId::TallGrass;
 }
 
 BlockId OceanBiome::getTopBlock(Rand& rand) const

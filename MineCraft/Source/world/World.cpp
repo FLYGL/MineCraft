@@ -8,26 +8,24 @@ namespace
 	constexpr int renderDistance =12;
 	// what means
 	constexpr float GRAV = -3;
-	//std::mutex m_chuMutex;
 }
 
 World::World(const Camera& camera):m_chunkManager(*this)
-//,m_thread([&] {
-//	while (m_running)
-//	{
-//		std::cout << "Task Running" << std::endl;
-//		loadChunks(camera);
-//	}
-//		})
+,m_chunkLoadThread([&] {
+	while (m_running)
+	{
+		loadChunks(camera);
+	}
+		})
 {
 	
 }
-//
-//World::~World()
-//{
-//	m_running = false;
-//	m_thread.join();
-//}
+
+World::~World()
+{
+	m_running = false;
+	m_chunkLoadThread.join();
+}
 
 bool World::setBlock(int x, int y, int z, ChunkBlock block)
 {
@@ -53,7 +51,7 @@ void World::update(const Camera& camera)
 	}
 	m_events.clear();
 	updateChunks();
-	loadChunks(camera);
+	//loadChunks(camera);
 }
 
 void World::loadChunks(const Camera& camera)
@@ -66,14 +64,14 @@ void World::loadChunks(const Camera& camera)
 		{
 			for (int z = cp.z - i; z < cp.z + i; z++)
 			{
-				//m_chuMutex.lock();
+				//m_mutex.lock();
 				if (m_chunkManager.makeMesh(x, z))
 				{
 					isMeshMade = true;
-					//m_chuMutex.unlock();
+					//m_mutex.unlock();
 					break;
 				}
-				//m_chuMutex.unlock();
+				//m_mutex.unlock();
 			}
 			if (isMeshMade) break;
 		}
@@ -96,8 +94,7 @@ void World::loadChunks(const Camera& camera)
 
 void World::renderWorld(RenderMaster& renderer,const Camera& camera)
 {
-	//m_chuMutex.lock();
-	auto& chunkMap = m_chunkManager.getChunks();
+	//m_mutex.lock();
 	for (int x = minRenderPosition.x; x < maxRenderPosition.x; x++)
 	{
 		for (int z = minRenderPosition.z; z < maxRenderPosition.z; z++)
@@ -106,11 +103,13 @@ void World::renderWorld(RenderMaster& renderer,const Camera& camera)
 			chunk.drawChunks(renderer,camera);
 		}
 	}
-	//m_chuMutex.unlock();
+	//m_mutex.unlock();
 }
 
 void World::updateChunk(int blockX, int blockY, int blockZ)
 {
+	//m_mutex.lock();
+
 	auto addChunkToUpdateBatch = [&](const sf::Vector3i& key, ChunkSection& section)
 	{
 		m_chunkUpdates.emplace(key, &section);
@@ -153,16 +152,20 @@ void World::updateChunk(int blockX, int blockY, int blockZ)
 		sf::Vector3i newKey(cp.x, cy, cp.z + 1);
 		addChunkToUpdateBatch(newKey, m_chunkManager.getChunk(newKey.x, newKey.z).getSection(newKey.y));
 	}
+	//m_mutex.unlock();
+
 }
 
 void World::updateChunks()
 {
+	//m_mutex.lock();
 	for (auto& chunk : m_chunkUpdates)
 	{
 		ChunkSection& s = *chunk.second;
 		s.makeMesh();
 	}
 	m_chunkUpdates.clear();
+	//m_mutex.unlock();
 }
 
 ChunkManager& World::getChunkManager()

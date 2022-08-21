@@ -53,6 +53,23 @@ namespace
         1, 0, 1,
         0, 0, 1
     };
+
+    const std::vector<GLfloat> xFace1
+    {
+        0,0,0,
+        1,0,1,
+        1,1,1,
+        0,1,0,
+    };
+
+    const std::vector<GLfloat> xFace2
+    {
+        0,0,1,
+        1,0,0,
+        1,1,0,
+        0,1,1,
+    };
+
     constexpr GLfloat LIGHT_TOP = 1.0f;
     constexpr GLfloat LIGHT_X = 0.8f;
     constexpr GLfloat LIGHT_Z = 0.6f;
@@ -107,8 +124,14 @@ void ChunkMeshBuilder::buildMesh()
 
                 m_pBlockData = &block.getData();
                 auto& data = *m_pBlockData;
-                directions.update(x, y, z);
 
+                if (data.meshType == BlockMeshType::X)
+                {
+                    addXBlockToMesh(data.texTopCoord, position);
+                    continue;
+                }
+
+                directions.update(x, y, z);
                 tryAddFaceToMesh(backFace, data.texSideCoord, position, directions.back,LIGHT_Z);
                 tryAddFaceToMesh(frontFace, data.texSideCoord, position, directions.front, LIGHT_Z);
                 tryAddFaceToMesh(rightFace, data.texSideCoord, position, directions.right,LIGHT_X);
@@ -133,6 +156,16 @@ void ChunkMeshBuilder::tryAddFaceToMesh(const std::vector<GLfloat>& blockFace,
         auto texCoords = BlockDatabase::get().textureAtlas.getTexture(textureCoords);
         m_pActiveMesh->addFace(blockFace, texCoords, m_pChunk->getLocation(), blockPosition,cardinalLight);
     }
+}
+
+void ChunkMeshBuilder::addXBlockToMesh(const sf::Vector2i& textureCoords, const sf::Vector3i& blockPosition)
+{
+    faces++;
+    auto texCoords = BlockDatabase::get().textureAtlas.getTexture(textureCoords);
+    m_pActiveMesh->addFace(xFace1, texCoords, m_pChunk->getLocation(),
+        blockPosition, LIGHT_X);
+    m_pActiveMesh->addFace(xFace2, texCoords, m_pChunk->getLocation(),
+        blockPosition, LIGHT_X);
 }
 
 bool ChunkMeshBuilder::shouldMakeFace(const sf::Vector3i& blockPosition,
